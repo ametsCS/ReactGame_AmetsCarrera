@@ -1,0 +1,27 @@
+.hexagon {
+    position: relative;
+    width: 100px; /* Ancho del hexágono */
+    height: 57.74px; /* Altura del hexágono (aproximadamente 2/raíz(3) veces el ancho) */
+    background-color: transparent;
+    margin: 29px auto; /* Espacio entre los hexágonos */
+  }
+  
+  .hexagon:before, .hexagon:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+  }
+  
+  .hexagon:before {
+    bottom: 100%;
+    border-bottom: 28.87px solid #000; /* Altura del triángulo inferior (aproximadamente la mitad de la altura del hexágono) */
+  }
+  
+  .hexagon:after {
+    top: 100%;
+    width: 0;
+    border-top: 28.87px solid #000; /* Altura del triángulo superior (aproximadamente la mitad de la altura del hexágono) */
+  }
+  
