@@ -1,3 +1,4 @@
+// main.scss
 @font-face {
   font-family: "Clear Sans";
   src: url("../src/clear-sans.ttf") format("truetype");
@@ -19,23 +20,6 @@ body {
   padding-top: 40px;
   width: 440px;
   font-weight: bold;
-}
-
-.board {
-  order: 1;
-  width: 440px;
-  height: 440px;
-  padding: 5px;
-  background-color: #57407c;
-  border-radius: 7px;
-  outline: none;
-  position: relative;
-}
-
-.board .cell,
-.tile {
-  user-select: none;
-  cursor: default;
 }
 
 .details-box {
@@ -72,171 +56,89 @@ body {
   border-radius: 7px;
 }
 
-.cell,
-.tile {
-  width: 100px;
-  height: 100px;
-  margin: 5px;
-  line-height: 90px;
-  display: inline-block;
-  font-size: 55px;
-  font-weight: bold;
-  text-align: center;
-  vertical-align: middle;
-  border-radius: 7px;
-  font-family: "Clear Sans";
-  color: #766;
+.hexagon {
+  position: relative;
+  width: 100px; /* adjust as needed */
+  height: 110px; /* = width * sqrt(3) / 2 */
   background-color: #3d2963;
+  margin:  2px; /* = width * sqrt(3) / 4 */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+
+  /* ...other styles... */
 }
 
-.tile0 {
-  background-color: #dcb;
-}
 
-.tile2 {
-  background-color: #eee;
-  background-image: url(./assets/img/2.gif);
-}
 
-.tile4 {
-  background-color: #eec;
-  background-image: url(./assets/img/4.gif);
-}
-
-.tile8 {
-  color: #ffe;
-  background-image: url(./assets/img/8.gif);
-}
-
-.tile16 {
-  color: #ffe;
-  background-image: url(./assets/img/16.gif);
-}
-
-.tile32 {
-  color: #ffe;
-  background-image: url(./assets/img/32.gif);
-}
-
-.tile64 {
-  color: #ffe;
-  background-image: url(./assets/img/64.gif);
-}
-
-.tile128 {
-  color: #ffe;
-  background-image: url(./assets/img/128.gif);
-}
-
-.tile256 {
-  color: #ffe;
-  background-image: url(./assets/img/256.gif);
-  font-size: 45px;
-}
-
-.tile512 {
-  color: #ffe;
-  background-image: url(./assets/img/512.gif);
-  font-size: 45px;
-}
-
-.tile1024 {
-  color: #fff;
-  background-image: url(./assets/img/1024.gif);
-  font-size: 35px;
-}
-
-.tile2048 {
+.hexagon::before,
+.hexagon::after {
+  content: "";
   position: absolute;
-  background-size: contain;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  padding: 0px;
-  color: #fff;
-  background-image: url(./assets/img/2048.gif);
-  font-size: 35px;
+  width: 0;
+  border-left: 50px solid transparent; /* = width / 2 */
+  border-right: 50px solid transparent; /* = width / 2 */
 }
 
-.try-again {
-  z-index: 10;
-  height: 100px;
-  width: 100px;
-  background-image: url(./assets/img/try-again.gif);
+.hexagon::before {
+  bottom: 100%;
+  border-bottom: 28.8675px solid #3d2963; /* = width * sqrt(3) / 4 */
 }
 
-.tile {
-  position: absolute;
+.hexagon::after {
+  top: 100%;
+  border-top: 28.8675px solid #3d2963; /* = width * sqrt(3) / 4 */
 }
 
-.tile.merged {
-  display: none;
-}
 
-.tile.merged.isMoving {
-  display: inline;
-}
-
-.tile.new,
-.overlay {
-  animation-duration: 0.2s;
-  animation-name: newTile;
-  animation-fill-mode: forwards;
-  animation-delay: 0.15s;
-  transform: scale(0);
-}
-
-@keyframes newTile {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-.overlay {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
+.row {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  left: 0px;
-  right: 0px;
-  font-size: 55px;
-  font-weight: bolder;
+}
+
+.board {
+  order: 1;
+  display: flex; // Make the board a flex container
+  justify-content: center; // Center rows horizontally
+  flex-wrap: wrap; // Allow rows to wrap
+  max-width: 400px; // Adjust the maximum width as needed
+  width: 100%; // Occupy the full width of the container
+  padding: 5px;
+  background-color: #57407c;
   border-radius: 7px;
+  outline: none;
+  position: relative;
+  margin: 0 auto; // Center the entire board horizontally
 }
 
-.tryAgain {
-  background-color: #876;
-  color: #fff;
-  height: 40px;
-  width: 200px;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
+.hexagon-button {
+  position: relative;
+  width: 60px; /* adjust as needed */
+  height: 65px; /* = width * sqrt(3) / 2 */
+  background-color: #3d2963;
+  margin: 4px; /* = width * sqrt(3) / 4 */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   border: none;
-  border-radius: 5px;
-  border: 2px solid white;
+  cursor: pointer;
+  color: white;
+  font-size: 18px;
 }
 
-.gameOver {
-  background-size: contain;
-  background-image: url(./assets/img/game-over.gif);
+.hexagon-button::before,
+.hexagon-button::after {
+  content: "";
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 100;
-  text-align: center;
+  width: 0;
+  border-left: 30px solid transparent; /* = width / 2 */
+  border-right: 30px solid transparent; /* = width / 2 */
 }
 
-.overlay .message {
-  color: #666;
+.hexagon-button::before {
+  bottom: 100%;
+  border-bottom: 17.32px solid #3d2963; /* = width * sqrt(3) / 4 */
 }
+
+.hexagon-button::after {
+  top: 100%;
+  border-top: 17.32px solid #3d2963; /* = width * sqrt(3) / 4 */
+}
+
+
+

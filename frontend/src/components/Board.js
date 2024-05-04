@@ -1,6 +1,7 @@
+// Board.js
 import React, { useState } from "react";
-import Tile from "./Tile";
 import Cell from "./Cell";
+import Tile from "./Tile";
 import { Board } from "../helper";
 import useEvent from "../hooks/useEvent";
 import GameOverlay from "./GameOverlay";
@@ -26,15 +27,34 @@ const BoardView = () => {
 
   useEvent("keydown", handleKeyDown);
 
-  const cells = board.cells.map((row, rowIndex) => {
-    return (
-      <div key={rowIndex}>
-        {row.map((col, colIndex) => {
-          return <Cell key={rowIndex * board.size + colIndex} />;
-        })}
-      </div>
-    );
-  });
+  const hexagonRows = [
+    [5, -25],
+    [6, -50],
+    [7, -25],
+    [8, 0],
+    [9, 25],
+    [8, 0],
+    [7, -25],
+    [6, -50],
+    [, -25]
+  ];
+
+  const cells = [];
+for (let row = 0; row < hexagonRows.length; row++) {
+  const [numHexagons, marginLeft] = hexagonRows[row];
+  const hexagons = [];
+  for (let col = 0; col < numHexagons; col++) {
+    // Modify this line to include the number for each hexagon
+    hexagons.push(
+      <Cell key={row * 9 + col} number={row * numHexagons + col} />);
+  }
+  cells.push(
+    <div className="row" key={row} style={{ marginLeft }}>
+      {hexagons}
+    </div>
+  );
+}
+
 
   const tiles = board.tiles
     .filter((tile) => tile.value !== 0)
