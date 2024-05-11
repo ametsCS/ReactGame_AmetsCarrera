@@ -58,18 +58,21 @@ class Board {
     this.tiles = [];
     this.cells = [];
     this.score = 0;
-    this.size = 4;
+    this.size = 9; // Changed size to 9 as per the hexagonal structure
     this.fourProbability = 0.1;
     this.deltaX = [-1, 0, 1, 0];
     this.deltaY = [0, -1, 0, 1];
-    for (var i = 0; i < this.size; ++i) {
-      this.cells[i] = [
-        this.addTile(),
-        this.addTile(),
-        this.addTile(),
-        this.addTile(),
-      ];
-    }
+    this.cells = [ // Define the hexagonal structure
+      [null, null, null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), null, null, null],
+      [null, null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), null, null],
+      [null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), null],
+      [this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile()],
+      [this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile()],
+      [this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile()],
+      [null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), null],
+      [null, null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), null, null],
+      [null, null, null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), null, null, null]
+    ];
     this.addRandomTile();
     this.addRandomTile();
     this.setPositions();
@@ -80,6 +83,7 @@ class Board {
     this.tiles.push(res);
     return res;
   }
+
 
   moveLeft() {
     var hasChanged = false;
@@ -110,27 +114,30 @@ class Board {
   setPositions() {
     this.cells.forEach((row, rowIndex) => {
       row.forEach((tile, columnIndex) => {
-        tile.oldRow = tile.row;
-        tile.oldColumn = tile.column;
-        tile.row = rowIndex;
-        tile.column = columnIndex;
-        tile.markForDeletion = false;
+        if (tile !== null) {
+          tile.oldRow = tile.row;
+          tile.oldColumn = tile.column;
+          tile.row = rowIndex;
+          tile.column = columnIndex;
+          tile.markForDeletion = false;
+        }
       });
     });
   }
   addRandomTile() {
     var emptyCells = [];
-    for (var r = 0; r < this.size; ++r) {
-      for (var c = 0; c < this.size; ++c) {
-        if (this.cells[r][c].value === 0) {
-          emptyCells.push({ r: r, c: c });
+    for (var i = 0; i < this.cells.length; i++) {
+      for (var j = 0; j < this.cells[i].length; j++) {
+        if (this.cells[i][j] === null) {
+          emptyCells.push({x: i, y: j});
         }
       }
     }
-    var index = ~~(Math.random() * emptyCells.length);
-    var cell = emptyCells[index];
-    var newValue = Math.random() < this.fourProbability ? 4 : 2;
-    this.cells[cell.r][cell.c] = this.addTile(newValue);
+    if (emptyCells.length > 0) {
+      var randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      var newValue = Math.random() < this.fourProbability ? 4 : 2;
+      this.cells[randomCell.x][randomCell.y] = this.addTile({value: newValue, x: randomCell.x, y: randomCell.y});
+    }
   }
   move(direction) {
     // 0 -> left, 1 -> up, 2 -> right, 3 -> down
@@ -158,28 +165,37 @@ class Board {
     return this.won;
   }
   hasLost() {
-    var canMove = false;
-    for (var row = 0; row < this.size; ++row) {
-      for (var column = 0; column < this.size; ++column) {
-        canMove |= this.cells[row][column].value === 0;
-        for (var dir = 0; dir < 4; ++dir) {
-          var newRow = row + this.deltaX[dir];
-          var newColumn = column + this.deltaY[dir];
-          if (
-            newRow < 0 ||
-            newRow >= this.size ||
-            newColumn < 0 ||
-            newColumn >= this.size
-          ) {
-            continue;
-          }
-          canMove |=
-            this.cells[row][column].value ===
-            this.cells[newRow][newColumn].value;
+    for (var i = 0; i < this.cells.length; i++) {
+      for (var j = 0; j < this.cells[i].length; j++) {
+        var tile = this.cells[i][j];
+        if (tile === null || this.canMove(i, j)) {
+          return false;
         }
       }
     }
-    return !canMove;
+    return true;
+  }
+  
+  canMove(row, column) {
+    var tile = this.cells[row][column];
+    var directions = [
+      { dx: -1, dy: 0 },
+      { dx: 1, dy: 0 },
+      { dx: 0, dy: -1 },
+      { dx: 0, dy: 1 }
+    ];
+    for (var i = 0; i < directions.length; i++) {
+      var direction = directions[i];
+      var newRow = row + direction.dx;
+      var newColumn = column + direction.dy;
+      if (newRow >= 0 && newRow < this.cells.length && newColumn >= 0 && newColumn < this.cells[newRow].length) {
+        var neighbour = this.cells[newRow][newColumn];
+        if (neighbour === null || neighbour.value === tile.value) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
 

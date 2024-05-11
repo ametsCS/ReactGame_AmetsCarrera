@@ -22,6 +22,9 @@ body {
 }
 
 .board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-gap: 2px;
   order: 1;
   width: 440px;
   height: 440px;
@@ -31,6 +34,7 @@ body {
   outline: none;
   position: relative;
 }
+
 
 .board .cell,
 .tile {
@@ -74,21 +78,14 @@ body {
 
 .cell,
 .tile {
-  width: 100px;
-  height: 100px;
-  margin: 5px;
-  line-height: 90px;
-  display: inline-block;
-  font-size: 55px;
-  font-weight: bold;
-  text-align: center;
-  vertical-align: middle;
-  border-radius: 7px;
-  font-family: "Clear Sans";
-  color: #766;
-  background-color: #3d2963;
+  width: 60px; /* Ancho del hexágono */
+  height: 70px; /* Altura del hexágono */
+  background-color: #3d2963; /* Color de fondo */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* Forma hexagonal */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
 .tile0 {
   background-color: #dcb;
 }
