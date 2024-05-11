@@ -74,7 +74,6 @@ class Board {
       [null, null, null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), null, null, null]
     ];
     this.addRandomTile();
-    this.addRandomTile();
     this.setPositions();
     this.won = false;
   }
@@ -126,17 +125,19 @@ class Board {
   }
   addRandomTile() {
     var emptyCells = [];
-    for (var i = 0; i < this.cells.length; i++) {
-      for (var j = 0; j < this.cells[i].length; j++) {
-        if (this.cells[i][j] === null) {
-          emptyCells.push({x: i, y: j});
+    for (var r = 0; r < this.size; ++r) {
+      for (var c = 0; c < this.size; ++c) {
+        if (this.cells[r][c] !== null && this.cells[r][c].value === 0) {
+          emptyCells.push({ r: r, c: c });
         }
       }
     }
     if (emptyCells.length > 0) {
-      var randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      var index = ~~(Math.random() * emptyCells.length);
+      var cell = emptyCells[index];
       var newValue = Math.random() < this.fourProbability ? 4 : 2;
-      this.cells[randomCell.x][randomCell.y] = this.addTile({value: newValue, x: randomCell.x, y: randomCell.y});
+      this.cells[cell.r][cell.c] = this.addTile(newValue, cell.r, cell.c);
+      console.log(this.cells[cell.r][cell.c]);
     }
   }
   move(direction) {

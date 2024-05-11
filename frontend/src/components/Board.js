@@ -26,16 +26,28 @@ const BoardView = () => {
 
   useEvent("keydown", handleKeyDown);
 
-  const cells = board.cells.map((row, rowIndex) => {
-    return (
-      <div key={rowIndex}>
-        {row.map((col, colIndex) => {
-          return <Cell key={rowIndex * board.size + colIndex} />;
-        })}
-      </div>
-    );
-  });
-
+  const cells = [];
+  for (let i = 0; i < board.cells.length; i++) {
+  const row = board.cells[i];
+  const rowCells = [];
+  for (let j = 0; j < row.length; j++) {
+    const col = row[j];
+    if (col !== null) {
+      // Agregar un elemento Cell si el valor no es nulo
+      rowCells.push(<Cell key={`${i}-${j}`} value={col} />);
+    } else {
+      // Agregar un div vacío para representar el "hueco"
+      rowCells.push(<div key={`${i}-${j}`} className="empty-cell" />);
+    }
+  }
+  // Agregar la fila de celdas al array de celdas
+  cells.push(
+    <div key={`row-${i}`}>
+      {rowCells}
+    </div>
+  );
+}
+  
   const tiles = board.tiles
     .filter((tile) => tile.value !== 0)
     .map((tile, index) => {
