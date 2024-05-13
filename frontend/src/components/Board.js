@@ -26,38 +26,44 @@ const BoardView = () => {
 
   useEvent("keydown", handleKeyDown);
 
-  const cells = [];
-  for (let i = 0; i < board.cells.length; i++) {
-  const row = board.cells[i];
-  const rowCells = [];
-  for (let j = 0; j < row.length; j++) {
-    const col = row[j];
-    if (col !== null) {
-      // Agregar un elemento Cell si el valor no es nulo
-      rowCells.push(<Cell key={`${i}-${j}`} value={col} />);
-    } else {
-      // Agregar un div vacío para representar el "hueco"
-      rowCells.push(<div key={`${i}-${j}`} className="empty-cell" />);
-    }
-  }
-  // Agregar la fila de celdas al array de celdas
-  cells.push(
-    <div key={`row-${i}`}>
-      {rowCells}
-    </div>
-  );
-}
-  
-  const tiles = board.tiles
-    .filter((tile) => tile.value !== 0)
-    .map((tile, index) => {
-      return <Tile tile={tile} key={index} />;
-    });
+  const cellsAndTiles = board.cells.map((row, rowIndex) => {
+    return (
+      <div key={rowIndex}>
+        {row.map((col, colIndex) => {
+          if (col !== null) {
+              return (
+                <React.Fragment key={rowIndex * board.size + colIndex}>
+                  {/* <Cell key={rowIndex * board.size + colIndex} /> */} 
+                  <Tile tile={col} />
+                </React.Fragment>
+              );
+          } else {
+            return <div key={rowIndex * board.size + colIndex} className="empty-cell" />;
+          }
+        })}
+      </div>
+    );
+  });
+
+ /*  const tiles = board.cells.map((row, rowIndex) => {
+    return (
+      <div key={rowIndex}>
+        {row.map((col, colIndex) => {
+          if (col !== null && col.value !== 0) {
+            return <Tile tile={col} key={rowIndex * board.size + colIndex} />;
+          } else {
+            return <div key={rowIndex * board.size + colIndex} className="empty-tile" />;
+          }
+        })}
+      </div>
+    );
+  }); */
 
   const resetGame = () => {
     setBoard(new Board());
   };
 
+  console.log(cellsAndTiles);
   return (
     <div>
       <div className="details-box">
@@ -70,8 +76,7 @@ const BoardView = () => {
         </div>
       </div>
       <div className="board">
-        {cells}
-        {tiles}
+          {cellsAndTiles}
         <GameOverlay onRestart={resetGame} board={board} />
       </div>
     </div>

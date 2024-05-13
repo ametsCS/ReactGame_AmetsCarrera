@@ -12,6 +12,7 @@ body {
   align-items: center;
   font-family: "Clear Sans", sans-serif;
   font-size: 21px;
+  position: relative;
 }
 
 .text {
@@ -24,7 +25,7 @@ body {
 .board {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  grid-gap: 2px;
+  grid-gap: 4px;
   order: 1;
   width: 100%;
   height: 100%;
@@ -32,7 +33,6 @@ body {
   background-color: #57407c;
   border-radius: 7px;
   outline: none;
-  position: relative;
 }
 
 
@@ -76,8 +76,7 @@ body {
   border-radius: 7px;
 }
 
-.cell,
-.tile {
+.cell {
   width: 60px; /* Ancho del hexágono */
   height: 70px; /* Altura del hexágono */
   background-color: #3d2963; /* Color de fondo */
@@ -85,7 +84,21 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1; /* Establecer un z-index inferior */
 }
+
+.tile{
+  width: 60px; /* Ancho del hexágono */
+  height: 70px; /* Altura del hexágono */
+  background-color: #3d2963; /* Color de fondo */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* Forma hexagonal */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2; /* Establecer un z-index superior */
+  background-size: contain; /* Ajustar el tamaño del fondo del azulejo */
+}
+
 .tile0 {
   background-color: #dcb;
 }
@@ -105,66 +118,11 @@ body {
   background-image: url(./assets/img/8.gif);
 }
 
-.tile16 {
-  color: #ffe;
-  background-image: url(./assets/img/16.gif);
-}
-
-.tile32 {
-  color: #ffe;
-  background-image: url(./assets/img/32.gif);
-}
-
-.tile64 {
-  color: #ffe;
-  background-image: url(./assets/img/64.gif);
-}
-
-.tile128 {
-  color: #ffe;
-  background-image: url(./assets/img/128.gif);
-}
-
-.tile256 {
-  color: #ffe;
-  background-image: url(./assets/img/256.gif);
-  font-size: 45px;
-}
-
-.tile512 {
-  color: #ffe;
-  background-image: url(./assets/img/512.gif);
-  font-size: 45px;
-}
-
-.tile1024 {
-  color: #fff;
-  background-image: url(./assets/img/1024.gif);
-  font-size: 35px;
-}
-
-.tile2048 {
-  position: absolute;
-  background-size: contain;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  padding: 0px;
-  color: #fff;
-  background-image: url(./assets/img/2048.gif);
-  font-size: 35px;
-}
-
 .try-again {
   z-index: 10;
   height: 100px;
   width: 100px;
   background-image: url(./assets/img/try-again.gif);
-}
-
-.tile {
-  position: absolute;
 }
 
 .tile.merged {
@@ -239,6 +197,12 @@ body {
 }
 
 .empty-cell {
+  width: 60px; /* Ancho de la celda vacía */
+  height: 70px; /* Altura de la celda vacía */
+  background-color: transparent; /* Color de fondo transparente */
+}
+
+.empty-tile {
   width: 60px; /* Ancho de la celda vacía */
   height: 70px; /* Altura de la celda vacía */
   background-color: transparent; /* Color de fondo transparente */

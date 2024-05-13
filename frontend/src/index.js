@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import BoardView from "./components/Board";
 import "./main.scss";
 import "./styles.scss";
@@ -64,4 +64,5 @@ function App() {
   return <BoardView />;
 }
 
-ReactDOM.render(<App />, document.getElementById("root"));
+const root = document.getElementById('root');
+ReactDOM.createRoot(root).render(<App />);

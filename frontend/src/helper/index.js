@@ -73,7 +73,8 @@ class Board {
       [null, null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), null, null],
       [null, null, null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), null, null, null]
     ];
-    this.addRandomTile();
+    //this.addRandomTiles();
+    this.fillBoardWithTiles();
     this.setPositions();
     this.won = false;
   }
@@ -123,7 +124,7 @@ class Board {
       });
     });
   }
-  addRandomTile() {
+  addRandomTiles() {
     var emptyCells = [];
     for (var r = 0; r < this.size; ++r) {
       for (var c = 0; c < this.size; ++c) {
@@ -133,12 +134,24 @@ class Board {
       }
     }
     if (emptyCells.length > 0) {
-      var index = ~~(Math.random() * emptyCells.length);
+      var index = Math.floor(Math.random() * emptyCells.length);
       var cell = emptyCells[index];
       var newValue = Math.random() < this.fourProbability ? 4 : 2;
       this.cells[cell.r][cell.c] = this.addTile(newValue, cell.r, cell.c);
-      console.log(this.cells[cell.r][cell.c]);
     }
+  }
+  fillBoardWithTiles() {
+    const possibleValues = [2, 4, 8];
+    this.cells.forEach((row, rowIndex) => {
+      row.forEach((tile, columnIndex) => {
+        if (tile !== null && tile.value === 0) {
+          var randomIndex = Math.floor(Math.random() * possibleValues.length);
+          var randomValue = possibleValues[randomIndex];
+          this.cells[rowIndex][columnIndex] = this.addTile(randomValue, rowIndex, columnIndex);
+        }
+      });
+    }); 
+    console.log(this.cells);
   }
   move(direction) {
     // 0 -> left, 1 -> up, 2 -> right, 3 -> down
@@ -151,7 +164,7 @@ class Board {
       this.cells = rotateLeft(this.cells);
     }
     if (hasChanged) {
-      this.addRandomTile();
+      this.addRandomTiles();
     }
     this.setPositions();
     return this;
