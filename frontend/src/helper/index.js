@@ -7,7 +7,6 @@ class Tile {
     this.markForDeletion = false;
     this.mergedInto = null;
     this.new = false;
-    this.id = this.id++ || 0;
   }
   isNew() {
     return this.new===true;
@@ -50,7 +49,7 @@ class Board {
         }
       });
     }); 
-    console.log(this.cells);
+    //console.log(this.cells);
   }
   clearOldTiles() {
     this.tiles = this.tiles.filter((tile) => tile.markForDeletion === false);

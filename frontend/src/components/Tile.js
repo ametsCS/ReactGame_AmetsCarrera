@@ -1,11 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Tile = ({ tile, id }) => {
-
-  const handleClick = () => {
-    // Mostrar la posición del tile en la consola
-    console.log("Posición del tile - Fila: " + tile.row + ", Columna: " + tile.column);
-  };
+const Tile = ({ tile, isMouseDown, onMouseDown, onMouseOver, onMouseUp }) => {
 
   //Zerikusia animazioekin eta CSS-arekin
   // 1. tile
@@ -29,7 +24,12 @@ const Tile = ({ tile, id }) => {
     classArray.push("new");
   }
   let classes = classArray.join(" ");
-  return <span className={classes} onClick={handleClick}></span>;
+  return <span
+            className={classes}
+            onMouseDown={onMouseDown}
+            onMouseOver={onMouseOver}
+            onMouseUp={onMouseUp}>
+          </span>;
 };
 
 export default Tile;
