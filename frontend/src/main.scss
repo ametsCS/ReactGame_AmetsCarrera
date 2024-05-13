@@ -12,7 +12,6 @@ body {
   align-items: center;
   font-family: "Clear Sans", sans-serif;
   font-size: 21px;
-  position: relative;
 }
 
 .text {
@@ -23,16 +22,14 @@ body {
 }
 
 .board {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-gap: 4px;
-  order: 1;
+  display: flex;
   width: 100%;
   height: 100%;
   padding: 5px;
   background-color: #57407c;
   border-radius: 7px;
   outline: none;
+  position: relative;
 }
 
 
@@ -76,18 +73,15 @@ body {
   border-radius: 7px;
 }
 
-.cell {
-  width: 60px; /* Ancho del hexágono */
-  height: 70px; /* Altura del hexágono */
-  background-color: #3d2963; /* Color de fondo */
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* Forma hexagonal */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1; /* Establecer un z-index inferior */
+.row {
+  display: flex; /* Utilizar flexbox para alinear los elementos en la fila */
+  justify-content: center; /* Distribuir uniformemente los elementos en la fila */
+  margin-bottom: 0px; /* Agregar espacio entre filas */
 }
 
-.tile{
+.cell,
+.tile {
+  margin: 2px; // Esto reemplaza 'grid-gap: 4px;'
   width: 60px; /* Ancho del hexágono */
   height: 70px; /* Altura del hexágono */
   background-color: #3d2963; /* Color de fondo */
@@ -95,12 +89,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2; /* Establecer un z-index superior */
   background-size: contain; /* Ajustar el tamaño del fondo del azulejo */
-}
-
-.tile0 {
-  background-color: #dcb;
 }
 
 .tile2 {

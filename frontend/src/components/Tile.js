@@ -1,6 +1,13 @@
 import React from "react";
 
 const Tile = ({ tile, id }) => {
+
+  const handleClick = () => {
+    // Mostrar la posición del tile en la consola
+    console.log("Posición del tile - Fila: " + tile.row + ", Columna: " + tile.column);
+  };
+
+  //Zerikusia animazioekin eta CSS-arekin
   // 1. tile
   // 2. tile#
   // 3. position_#_#
@@ -21,14 +28,8 @@ const Tile = ({ tile, id }) => {
   if (tile.isNew()) {
     classArray.push("new");
   }
-  if (tile.hasMoved()) {
-    classArray.push(`row_from_${tile.fromRow()}_to_${tile.toRow()}`);
-    classArray.push(`column_from_${tile.fromColumn()}_to_${tile.toColumn()}`);
-    classArray.push("isMoving");
-  }
-
   let classes = classArray.join(" ");
-  return <span className={classes}></span>;
+  return <span className={classes} onClick={handleClick}></span>;
 };
 
 export default Tile;

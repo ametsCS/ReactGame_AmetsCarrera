@@ -24,7 +24,7 @@ function App() {
           ],
           model: "Llama3-70b-8192"
         });
-        console.log(chatCompletion.choices[0]?.message?.content || "");
+        //console.log(chatCompletion.choices[0]?.message?.content || "");    JARRI BERRIZ
       } catch (error) {
         console.error('Error fetching data:', error);
       }

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Tile from "./Tile";
-import Cell from "./Cell";
 import { Board } from "../helper";
 import useEvent from "../hooks/useEvent";
 import GameOverlay from "./GameOverlay";
@@ -25,45 +24,28 @@ const BoardView = () => {
   };
 
   useEvent("keydown", handleKeyDown);
+  
+  //lehenengo beidatu zutabeak eta gero errenkadak
+  const cellsAndTiles = [];
+  for (let colIndex = 0; colIndex < board.size+1; colIndex++) {
+  const column = [];
+  for (let rowIndex = 0; rowIndex < board.size; rowIndex++) {
+    const tile = board.cells[rowIndex][colIndex];
+    if (tile !== null) {
+      column.push(<Tile tile={tile} key={rowIndex * board.size + colIndex} />);
+    } else {
+      column.push(<div key={rowIndex * board.size + colIndex} className="empty-cell" />);
+    }
+  }
+  cellsAndTiles.push(<div key={colIndex}>{column}</div>);
+}
 
-  const cellsAndTiles = board.cells.map((row, rowIndex) => {
-    return (
-      <div key={rowIndex}>
-        {row.map((col, colIndex) => {
-          if (col !== null) {
-              return (
-                <React.Fragment key={rowIndex * board.size + colIndex}>
-                  {/* <Cell key={rowIndex * board.size + colIndex} /> */} 
-                  <Tile tile={col} />
-                </React.Fragment>
-              );
-          } else {
-            return <div key={rowIndex * board.size + colIndex} className="empty-cell" />;
-          }
-        })}
-      </div>
-    );
-  });
-
- /*  const tiles = board.cells.map((row, rowIndex) => {
-    return (
-      <div key={rowIndex}>
-        {row.map((col, colIndex) => {
-          if (col !== null && col.value !== 0) {
-            return <Tile tile={col} key={rowIndex * board.size + colIndex} />;
-          } else {
-            return <div key={rowIndex * board.size + colIndex} className="empty-tile" />;
-          }
-        })}
-      </div>
-    );
-  }); */
 
   const resetGame = () => {
     setBoard(new Board());
   };
 
-  console.log(cellsAndTiles);
+  //console.log(cellsAndTiles);
   return (
     <div>
       <div className="details-box">
