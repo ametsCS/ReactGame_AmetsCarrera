@@ -63,19 +63,16 @@ class Board {
   createPila() {
     const possibleValues = [2, 4, 8];
     const pila = [];
-    const minElements = 100;
-    const maxElements = 200; // Establecer un máximo para evitar un bucle infinito en caso de problemas
-    let count = 0;
+    const targetElements = 150; // Número deseado de elementos en la pila
 
-    while (pila.length < minElements && count < maxElements) {
+    while (pila.length < targetElements) {
       const randomIndex = Math.floor(Math.random() * possibleValues.length);
       const randomValue = possibleValues[randomIndex];
       pila.push(randomValue);
-      count++;
     }
 
     this.pila = pila;
-  }
+}
 
 
   clearMarkedTiles = (tilesToRemove) => {
@@ -90,20 +87,58 @@ class Board {
         }
       });
     });
+    this.calculateScore(tilesToRemove);
   };
 
 
+  calculateScore = (tilesToRemove) => {
+    const bonusFactor = tilesToRemove.length; // Factor de bonificación basado en la cantidad de Tiles seleccionados
+    // Calcular el puntaje usando la fórmula
+    const score = (bonusFactor - 1) + (bonusFactor - 2);
+    this.score += score;
+  };
+
   
   hasWon() {
-    return this.won;
+    if (this.score >= 50) {
+      this.won = true;
+      return this.won;
+    }
   }
 
 
   hasLost() {
+    let hasNeighbor = false;
 
-  }
+    this.cells.forEach((row, rowIndex) => {
+        row.forEach((tile, colIndex) => {
+            if (tile && tile.value !== 0) {
+                const directions = [
+                    { di: 0, dj: -1 }, // izquierda
+                    { di: 1, dj: -1 }, // arriba-izquierda
+                    { di: 1, dj: 0 },  // arriba-derecha
+                    { di: 0, dj: 1 },  // derecha
+                    { di: -1, dj: 1 }, // abajo-derecha
+                    { di: -1, dj: 0 }  // abajo-izquierda
+                ];
+
+                // Verificar si hay al menos un tile vecino del mismo valor para el tile actual
+                for (const dir of directions) {
+                    const ni = rowIndex + dir.di;
+                    const nj = colIndex + dir.dj;
+
+                    // Verificar si las coordenadas del vecino están dentro de los límites del tablero
+                    if (this.cells[ni] && this.cells[ni][nj] && this.cells[ni][nj].value === tile.value) {
+                        hasNeighbor = true;
+                        return; // Salir del bucle si se encuentra al menos un vecino del mismo valor
+                    }
+                }
+            }
+        });
+    });
+    return !hasNeighbor;
+}
 
 
 }
-
 export { Board };

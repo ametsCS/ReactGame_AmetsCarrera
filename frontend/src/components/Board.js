@@ -81,6 +81,7 @@ const BoardView = () => {
     setBoard(new Board());
   };
 
+  //console.log(board.cells);
   //console.log(cellsAndTiles);
   //console.log(selectedTiles);
   return (
