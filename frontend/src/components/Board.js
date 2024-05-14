@@ -88,11 +88,15 @@ const BoardView = () => {
     <div>
       <div className="details-box">
         <div className="resetButton" onClick={resetGame}>
-          new game
+          NEW GAME
         </div>
         <div className="score-box">
           <div className="score-header">SCORE</div>
           <div>{board.score}</div>
+        </div>
+        <div className="objective-box">
+          <div className="objective-header">OBJECTIVE</div>
+          <div>{board.objective}</div>
         </div>
       </div>
       <div className="board">
