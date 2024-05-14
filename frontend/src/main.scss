@@ -32,6 +32,21 @@ body {
   position: relative;
 }
 
+.tile-container {
+  position: relative; /* Asegura que los pseudo-elementos se posicionen en relación con este contenedor */
+}
+
+.tile-container::before {
+  content: "";
+  position: absolute;
+  top: -3px; /* Ajusta según sea necesario */
+  left: -3px; /* Ajusta según sea necesario */
+  width: calc(100% + 6px); /* Ajusta según sea necesario */
+  height: calc(100% + 6px); /* Ajusta según sea necesario */
+  background-color: white; /* Color del hexágono blanco */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* Forma hexagonal */
+  z-index: 0; /* Coloca el hexágono detrás de los azulejos */
+}
 
 .board .cell,
 .tile {
@@ -114,31 +129,6 @@ body {
   background-image: url(./assets/img/try-again.gif);
 }
 
-.tile.merged {
-  display: none;
-}
-
-.tile.merged.isMoving {
-  display: inline;
-}
-
-.tile.new,
-.overlay {
-  animation-duration: 0.2s;
-  animation-name: newTile;
-  animation-fill-mode: forwards;
-  animation-delay: 0.15s;
-  transform: scale(0);
-}
-
-@keyframes newTile {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
-}
 
 .overlay {
   position: absolute;
@@ -195,4 +185,21 @@ body {
   width: 60px; /* Ancho de la celda vacía */
   height: 70px; /* Altura de la celda vacía */
   background-color: transparent; /* Color de fondo transparente */
+}
+
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+}
+
+
+.scale-in {
+  animation: scaleIn 1.5s ease forwards;
 }

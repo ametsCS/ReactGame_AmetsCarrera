@@ -35,8 +35,23 @@ const BoardView = () => {
   const handleTileMouseUp = () => {
     setIsMouseDown(false);
     setFirstTileValue(null); // Reiniciar el valor del primer Tile cuando se suelta el mouse
+    
+    if (selectedTiles.length > 1) {
+      // Establecer markForDeletion en true para los tiles en selectedTiles
+      setSelectedTiles((prevSelectedTiles) => {
+        return prevSelectedTiles.map((tile) => {
+          return { ...tile, markForDeletion: true };
+        });
+      });
+
+      board.clearMarkedTiles(selectedTiles); // Eliminar los tiles marcados
+    }
+    setSelectedTiles([]); // Limpiar selectedTiles
+    //console.log(board.cells);
   };
   
+
+
   //lehenengo beidatu zutabeak eta gero errenkadak
   const cellsAndTiles = [];
   for (let colIndex = 0; colIndex < board.size+1; colIndex++) {
@@ -45,6 +60,10 @@ const BoardView = () => {
     const tile = board.cells[rowIndex][colIndex];
     if (tile !== null) {
       column.push(<Tile tile={tile} key={rowIndex * board.size + colIndex} 
+                  isSelected={selectedTiles.some(
+                    (selectedTile) =>
+                      selectedTile.row === tile.row && selectedTile.column === tile.column
+                  )}
                   isMouseDown={isMouseDown}
                   onMouseDown={() => handleTileMouseDown(tile)}
                   onMouseOver={() => handleTileMouseOver(tile)}
@@ -63,7 +82,7 @@ const BoardView = () => {
   };
 
   //console.log(cellsAndTiles);
-  console.log(selectedTiles);
+  //console.log(selectedTiles);
   return (
     <div>
       <div className="details-box">
