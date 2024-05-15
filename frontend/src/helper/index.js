@@ -5,7 +5,6 @@ class Tile {
     this.row = row || 0;
     this.column = column || 0;
     this.markForDeletion = false;
-    this.mergedInto = null;
     this.new = false;
   }
 
@@ -19,7 +18,6 @@ class Board {
   constructor(boardArray,pilaArray) {
     this.tiles = [];
     this.cells = [];
-    console.log(pilaArray);
     this.pila = pilaArray;
     this.score = 0;
     this.objective = 340;

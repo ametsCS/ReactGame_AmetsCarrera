@@ -4,15 +4,72 @@ import Tile from "./Tile";
 import { Board } from "../helper";
 import GameOverlay from "./GameOverlay";
 
+const game_Rules = process.env.GAME_RULES;
+
 const Groq = require("groq-sdk");
 const groq = new Groq({
   apiKey: process.env.REACT_APP_GROQ_API_KEY,
   dangerouslyAllowBrowser: true
 });
 
-const LLMBoardView = ({boardArray, pilaArray}) => {
+const LLMBoardView = ({ boardArray, pilaArray }) => {
+
+  /* async function gameRules() {
+    try {
+      const gameRules = {
+        role: "system", 
+        content: "[[null,null,null,{value:8,row:0,column:3,markForDeletion:false,mergedInto:null,new:false},{value:8,row:0,column:4,markForDeletion:false,mergedInto:null,new:false},{value:2,row:0,column:5,markForDeletion:false,mergedInto:null,new:false},{value:256,row:0,column:6,markForDeletion:false,mergedInto:null,new:false},null,null,null],[null,null,{value:2,row:1,column:2,markForDeletion:false,mergedInto:null,new:false},{value:2,row:1,column:3,markForDeletion:false,mergedInto:null,new:false},{value:8,row:1,column:4,markForDeletion:false,mergedInto:null,new:false},{value:8,row:1,column:5,markForDeletion:false,mergedInto:null,new:false},{value:8,row:1,column:6,markForDeletion:false,mergedInto:null,new:false},{value:8,row:1,column:7,markForDeletion:false,mergedInto:null,new:false},null,null],[null,{value:8,row:2,column:1,markForDeletion:false,mergedInto:null,new:false},{value:8,row:2,column:2,markForDeletion:false,mergedInto:null,new:false},{value:2,row:2,column:3,markForDeletion:false,mergedInto:null,new:false},{value:2,row:2,column:4,markForDeletion:false,mergedInto:null,new:false},{value:8,row:2,column:5,markForDeletion:false,mergedInto:null,new:false},{value:8,row:2,column:6,markForDeletion:false,mergedInto:null,new:false},{value:2,row:2,column:7,markForDeletion:false,mergedInto:null,new:false},{value:8,row:2,column:8,markForDeletion:false,mergedInto:null,new:false},null],[{value:256,row:3,column:0,markForDeletion:false,mergedInto:null,new:false},{value:2,row:3,column:1,markForDeletion:false,mergedInto:null,new:false},{value:256,row:3,column:2,markForDeletion:false,mergedInto:null,new:false},{value:2,row:3,column:3,markForDeletion:false,mergedInto:null,new:false},{value:256,row:3,column:4,markForDeletion:false,mergedInto:null,new:false},{value:2,row:3,column:5,markForDeletion:false,mergedInto:null,new:false},{value:256,row:3,column:6,markForDeletion:false,mergedInto:null,new:false},{value:256,row:3,column:7,markForDeletion:false,mergedInto:null,new:false},{value:256,row:3,column:8,markForDeletion:false,mergedInto:null,new:false},{value:2,row:3,column:9,markForDeletion:false,mergedInto:null,new:false}],[{value:2,row:4,column:0,markForDeletion:false,mergedInto:null,new:false},{value:8,row:4,column:1,markForDeletion:false,mergedInto:null,new:false},{value:256,row:4,column:2,markForDeletion:false,mergedInto:null,new:false},{value:256,row:4,column:3,markForDeletion:false,mergedInto:null,new:false},{value:256,row:4,column:4,markForDeletion:false,mergedInto:null,new:false},{value:8,row:4,column:5,markForDeletion:false,mergedInto:null,new:false},{value:2,row:4,column:6,markForDeletion:false,mergedInto:null,new:false},{value:8,row:4,column:7,markForDeletion:false,mergedInto:null,new:false},{value:2,row:4,column:8,markForDeletion:false,mergedInto:null,new:false},{value:8,row:4,column:9,markForDeletion:false,mergedInto:null,new:false}],[{value:256,row:5,column:0,markForDeletion:false,mergedInto:null,new:false},{value:8,row:5,column:1,markForDeletion:false,mergedInto:null,new:false},{value:8,row:5,column:2,markForDeletion:false,mergedInto:null,new:false},{value:8,row:5,column:3,markForDeletion:false,mergedInto:null,new:false},{value:2,row:5,column:4,markForDeletion:false,mergedInto:null,new:false},{value:2,row:5,column:5,markForDeletion:false,mergedInto:null,new:false},{value:2,row:5,column:6,markForDeletion:false,mergedInto:null,new:false},{value:8,row:5,column:7,markForDeletion:false,mergedInto:null,new:false},{value:256,row:5,column:8,markForDeletion:false,mergedInto:null,new:false},{value:256,row:5,column:9,markForDeletion:false,mergedInto:null,new:false}],[null,{value:256,row:6,column:1,markForDeletion:false,mergedInto:null,new:false},{value:256,row:6,column:2,markForDeletion:false,mergedInto:null,new:false},{value:256,row:6,column:3,markForDeletion:false,mergedInto:null,new:false},{value:2,row:6,column:4,markForDeletion:false,mergedInto:null,new:false},{value:8,row:6,column:5,markForDeletion:false,mergedInto:null,new:false},{value:8,row:6,column:6,markForDeletion:false,mergedInto:null,new:false},{value:256,row:6,column:7,markForDeletion:false,mergedInto:null,new:false},{value:2,row:6,column:8,markForDeletion:false,mergedInto:null,new:false},null],[null,null,{value:2,row:7,column:2,markForDeletion:false,mergedInto:null,new:false},{value:8,row:7,column:3,markForDeletion:false,mergedInto:null,new:false},{value:8,row:7,column:4,markForDeletion:false,mergedInto:null,new:false},{value:2,row:7,column:5,markForDeletion:false,mergedInto:null,new:false},{value:2,row:7,column:6,markForDeletion:false,mergedInto:null,new:false},{value:256,row:7,column:7,markForDeletion:false,mergedInto:null,new:false},null,null],[null,null,null,{value:2,row:8,column:3,markForDeletion:false,mergedInto:null,new:false},{value:2,row:8,column:4,markForDeletion:false,mergedInto:null,new:false},{value:256,row:8,column:5,markForDeletion:false,mergedInto:null,new:false},{value:2,row:8,column:6,markForDeletion:false,mergedInto:null,new:false},null,null,null]] este es el tablero de un juego de unir numeros. Quiero que generes un array de respuesta donde devuelvas la mayor secuencia de numeros vecinos que hay en el tablero. Los numeros son vecinos cuando estan a a una columna o row de distancia tanto vertical, horizontal o diagonalmente. Devuelve la sequencia"
+      };
+      const response = await groq.chat.completions.create({
+        messages: [gameRules],
+        model: "Llama3-70b-8192"
+      });
+      console.log(response.choices[0]?.message?.content || "");
+    } catch (error) {
+      console.error('Error informing game rules:', error);
+    }
+  }
+
+  async function makeMove(boardState) {
+    try {
+      const boardStateMessage = {
+        role: "user",
+        content: JSON.stringify(boardState) // Pasamos el estado del tablero como un string JSON
+      };
+      const response = await groq.chat.completions.create({
+        messages: [boardStateMessage],
+        model: "Llama3-70b-8192"
+      });
+      const move = response.choices[0]?.message?.content || "";
+      console.log('Move:', move);
+      return move;
+    } catch (error) {
+      console.error('Error making move:', error);
+    }
+  }
+
+  function applyMove(boardState, move) {
+    // Primero, copiamos el estado del tablero para no mutar el estado original
+    let newBoardState = JSON.parse(JSON.stringify(boardState));
+
+    // Luego, marcamos los tiles para la eliminación basándonos en el movimiento
+    // Suponemos que el movimiento es una lista de tiles a eliminar
+    for (let tile of move) {
+      let tileInBoard = newBoardState.find(t => t.id === tile.id);
+      if (tileInBoard) {
+        tileInBoard.markForDeletion = true;
+      }
+    }
+
+    // Finalmente, limpiamos los tiles marcados para la eliminación
+    newBoardState = newBoardState.filter(tile => !tile.markForDeletion);
+
+    return newBoardState;
+  }
 
   useEffect(() => {
+    gameRules();
+
     async function fetchData(content) {
       try {
         const chatCompletion = await groq.chat.completions.create({
@@ -29,18 +86,22 @@ const LLMBoardView = ({boardArray, pilaArray}) => {
         console.error('Error fetching data:', error);
       }
     }
-    
     // Llamamos a fetchData con el contenido del mensaje deseado
-    fetchData("Explain the importance of fast language models");
+    //fetchData("Explain the importance of fast language models");
   }, []); // Empty dependency array ensures that this effect runs only once, similar to componentDidMount
 
-  const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
+  const handleEvent = async () => {
+    const move = await makeMove(board);
+    // Aquí puedes hacer algo con el movimiento que recibiste, como aplicarlo al estado del tablero
+    const newBoardState = applyMove(board, move);
+    setBoard(newBoardState);
+  }; */
 
+  const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
+  //console.log(JSON.stringify(board.cells));
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
   const [isMouseDown, setIsMouseDown] = useState(false); //mouse klikatuta dagoen edo ez
   const [firstTileValue, setFirstTileValue] = useState(null); //lehenengo tilearen balioa
-
-  
 
   const handleTileMouseDown = (tile) => {
     if (tile.value !== 0) {
