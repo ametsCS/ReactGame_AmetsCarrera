@@ -5,7 +5,7 @@ import GameOverlay from "./GameOverlay";
 
 const BoardView = ({ boardArray, pilaArray }) => {
   const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
-  console.log(JSON.stringify(board.cells));
+  //console.log(JSON.stringify(board.cells));
 
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
   const [isMouseDown, setIsMouseDown] = useState(false); //mouse klikatuta dagoen edo ez

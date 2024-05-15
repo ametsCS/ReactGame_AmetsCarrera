@@ -4,7 +4,6 @@ import Tile from "./Tile";
 import { Board } from "../helper";
 import GameOverlay from "./GameOverlay";
 
-const game_Rules = process.env.GAME_RULES;
 
 const Groq = require("groq-sdk");
 const groq = new Groq({
@@ -14,135 +13,133 @@ const groq = new Groq({
 
 const LLMBoardView = ({ boardArray, pilaArray }) => {
 
-  /* async function gameRules() {
-    try {
-      const gameRules = {
-        role: "system", 
-        content: "[[null,null,null,{value:8,row:0,column:3,markForDeletion:false,mergedInto:null,new:false},{value:8,row:0,column:4,markForDeletion:false,mergedInto:null,new:false},{value:2,row:0,column:5,markForDeletion:false,mergedInto:null,new:false},{value:256,row:0,column:6,markForDeletion:false,mergedInto:null,new:false},null,null,null],[null,null,{value:2,row:1,column:2,markForDeletion:false,mergedInto:null,new:false},{value:2,row:1,column:3,markForDeletion:false,mergedInto:null,new:false},{value:8,row:1,column:4,markForDeletion:false,mergedInto:null,new:false},{value:8,row:1,column:5,markForDeletion:false,mergedInto:null,new:false},{value:8,row:1,column:6,markForDeletion:false,mergedInto:null,new:false},{value:8,row:1,column:7,markForDeletion:false,mergedInto:null,new:false},null,null],[null,{value:8,row:2,column:1,markForDeletion:false,mergedInto:null,new:false},{value:8,row:2,column:2,markForDeletion:false,mergedInto:null,new:false},{value:2,row:2,column:3,markForDeletion:false,mergedInto:null,new:false},{value:2,row:2,column:4,markForDeletion:false,mergedInto:null,new:false},{value:8,row:2,column:5,markForDeletion:false,mergedInto:null,new:false},{value:8,row:2,column:6,markForDeletion:false,mergedInto:null,new:false},{value:2,row:2,column:7,markForDeletion:false,mergedInto:null,new:false},{value:8,row:2,column:8,markForDeletion:false,mergedInto:null,new:false},null],[{value:256,row:3,column:0,markForDeletion:false,mergedInto:null,new:false},{value:2,row:3,column:1,markForDeletion:false,mergedInto:null,new:false},{value:256,row:3,column:2,markForDeletion:false,mergedInto:null,new:false},{value:2,row:3,column:3,markForDeletion:false,mergedInto:null,new:false},{value:256,row:3,column:4,markForDeletion:false,mergedInto:null,new:false},{value:2,row:3,column:5,markForDeletion:false,mergedInto:null,new:false},{value:256,row:3,column:6,markForDeletion:false,mergedInto:null,new:false},{value:256,row:3,column:7,markForDeletion:false,mergedInto:null,new:false},{value:256,row:3,column:8,markForDeletion:false,mergedInto:null,new:false},{value:2,row:3,column:9,markForDeletion:false,mergedInto:null,new:false}],[{value:2,row:4,column:0,markForDeletion:false,mergedInto:null,new:false},{value:8,row:4,column:1,markForDeletion:false,mergedInto:null,new:false},{value:256,row:4,column:2,markForDeletion:false,mergedInto:null,new:false},{value:256,row:4,column:3,markForDeletion:false,mergedInto:null,new:false},{value:256,row:4,column:4,markForDeletion:false,mergedInto:null,new:false},{value:8,row:4,column:5,markForDeletion:false,mergedInto:null,new:false},{value:2,row:4,column:6,markForDeletion:false,mergedInto:null,new:false},{value:8,row:4,column:7,markForDeletion:false,mergedInto:null,new:false},{value:2,row:4,column:8,markForDeletion:false,mergedInto:null,new:false},{value:8,row:4,column:9,markForDeletion:false,mergedInto:null,new:false}],[{value:256,row:5,column:0,markForDeletion:false,mergedInto:null,new:false},{value:8,row:5,column:1,markForDeletion:false,mergedInto:null,new:false},{value:8,row:5,column:2,markForDeletion:false,mergedInto:null,new:false},{value:8,row:5,column:3,markForDeletion:false,mergedInto:null,new:false},{value:2,row:5,column:4,markForDeletion:false,mergedInto:null,new:false},{value:2,row:5,column:5,markForDeletion:false,mergedInto:null,new:false},{value:2,row:5,column:6,markForDeletion:false,mergedInto:null,new:false},{value:8,row:5,column:7,markForDeletion:false,mergedInto:null,new:false},{value:256,row:5,column:8,markForDeletion:false,mergedInto:null,new:false},{value:256,row:5,column:9,markForDeletion:false,mergedInto:null,new:false}],[null,{value:256,row:6,column:1,markForDeletion:false,mergedInto:null,new:false},{value:256,row:6,column:2,markForDeletion:false,mergedInto:null,new:false},{value:256,row:6,column:3,markForDeletion:false,mergedInto:null,new:false},{value:2,row:6,column:4,markForDeletion:false,mergedInto:null,new:false},{value:8,row:6,column:5,markForDeletion:false,mergedInto:null,new:false},{value:8,row:6,column:6,markForDeletion:false,mergedInto:null,new:false},{value:256,row:6,column:7,markForDeletion:false,mergedInto:null,new:false},{value:2,row:6,column:8,markForDeletion:false,mergedInto:null,new:false},null],[null,null,{value:2,row:7,column:2,markForDeletion:false,mergedInto:null,new:false},{value:8,row:7,column:3,markForDeletion:false,mergedInto:null,new:false},{value:8,row:7,column:4,markForDeletion:false,mergedInto:null,new:false},{value:2,row:7,column:5,markForDeletion:false,mergedInto:null,new:false},{value:2,row:7,column:6,markForDeletion:false,mergedInto:null,new:false},{value:256,row:7,column:7,markForDeletion:false,mergedInto:null,new:false},null,null],[null,null,null,{value:2,row:8,column:3,markForDeletion:false,mergedInto:null,new:false},{value:2,row:8,column:4,markForDeletion:false,mergedInto:null,new:false},{value:256,row:8,column:5,markForDeletion:false,mergedInto:null,new:false},{value:2,row:8,column:6,markForDeletion:false,mergedInto:null,new:false},null,null,null]] este es el tablero de un juego de unir numeros. Quiero que generes un array de respuesta donde devuelvas la mayor secuencia de numeros vecinos que hay en el tablero. Los numeros son vecinos cuando estan a a una columna o row de distancia tanto vertical, horizontal o diagonalmente. Devuelve la sequencia"
-      };
-      const response = await groq.chat.completions.create({
-        messages: [gameRules],
-        model: "Llama3-70b-8192"
-      });
-      console.log(response.choices[0]?.message?.content || "");
-    } catch (error) {
-      console.error('Error informing game rules:', error);
-    }
-  }
-
-  async function makeMove(boardState) {
-    try {
-      const boardStateMessage = {
-        role: "user",
-        content: JSON.stringify(boardState) // Pasamos el estado del tablero como un string JSON
-      };
-      const response = await groq.chat.completions.create({
-        messages: [boardStateMessage],
-        model: "Llama3-70b-8192"
-      });
-      const move = response.choices[0]?.message?.content || "";
-      console.log('Move:', move);
-      return move;
-    } catch (error) {
-      console.error('Error making move:', error);
-    }
-  }
-
-  function applyMove(boardState, move) {
-    // Primero, copiamos el estado del tablero para no mutar el estado original
-    let newBoardState = JSON.parse(JSON.stringify(boardState));
-
-    // Luego, marcamos los tiles para la eliminación basándonos en el movimiento
-    // Suponemos que el movimiento es una lista de tiles a eliminar
-    for (let tile of move) {
-      let tileInBoard = newBoardState.find(t => t.id === tile.id);
-      if (tileInBoard) {
-        tileInBoard.markForDeletion = true;
-      }
-    }
-
-    // Finalmente, limpiamos los tiles marcados para la eliminación
-    newBoardState = newBoardState.filter(tile => !tile.markForDeletion);
-
-    return newBoardState;
-  }
+  const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
+  const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
 
   useEffect(() => {
-    gameRules();
-
-    async function fetchData(content) {
-      try {
-        const chatCompletion = await groq.chat.completions.create({
-          messages: [
-            {
-              role: "user",
-              content: content // Pasamos el contenido como atributo
-            }
-          ],
-          model: "Llama3-70b-8192"
-        });
-        console.log(chatCompletion.choices[0]?.message?.content || "");
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-    // Llamamos a fetchData con el contenido del mensaje deseado
-    //fetchData("Explain the importance of fast language models");
-  }, []); // Empty dependency array ensures that this effect runs only once, similar to componentDidMount
-
-  const handleEvent = async () => {
-    const move = await makeMove(board);
-    // Aquí puedes hacer algo con el movimiento que recibiste, como aplicarlo al estado del tablero
-    const newBoardState = applyMove(board, move);
-    setBoard(newBoardState);
-  }; */
-
-  const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
-  //console.log(JSON.stringify(board.cells));
-  const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
-  const [isMouseDown, setIsMouseDown] = useState(false); //mouse klikatuta dagoen edo ez
-  const [firstTileValue, setFirstTileValue] = useState(null); //lehenengo tilearen balioa
-
-  const handleTileMouseDown = (tile) => {
-    if (tile.value !== 0) {
-      setIsMouseDown(true);
-      setSelectedTiles([tile]);
-      setFirstTileValue(tile.value);
-    }
-  };
-  
-  const handleTileMouseOver = (tile) => {
-    if (isMouseDown && tile.value === firstTileValue && tile.value !== 0 &&
-        !selectedTiles.some(selectedTile => selectedTile.row === tile.row && selectedTile.column === tile.column)) {
-      if (selectedTiles.length > 0) {
-        const lastTile = selectedTiles[selectedTiles.length - 1];
-        if (Math.abs(tile.row - lastTile.row) <= 1 && Math.abs(tile.column - lastTile.column) <= 1) {
-          setSelectedTiles((prevTiles) => [...prevTiles, tile]);
+    async function gameRules() {
+        try {
+            const gameRules = {
+                role: "system",
+                content: jsonString + " select one of those 3 arrays and return just the array without text"
+            };
+            const response = await groq.chat.completions.create({
+                messages: [gameRules],
+                model: "Llama3-70b-8192"
+            });
+            let erantzuna = response.choices[0]?.message?.content || "";
+            console.log(erantzuna);
+            completeSelectedTiles(erantzuna);
+        } catch (error) {
+            console.error('Error informing game rules:', error);
         }
-      } else {
-        setSelectedTiles((prevTiles) => [...prevTiles, tile]);
-      }
     }
-  };
-  
-  const handleTileMouseUp = () => {
-    setIsMouseDown(false);
-    setFirstTileValue(null); // Reiniciar el valor del primer Tile cuando se suelta el mouse
-    
-    if (selectedTiles.length > 1) {
-      // Establecer markForDeletion en true para los tiles en selectedTiles
-      setSelectedTiles((prevSelectedTiles) => {
-        return prevSelectedTiles.map((tile) => {
-          return { ...tile, markForDeletion: true };
-        });
-      });
 
-      board.clearMarkedTiles(selectedTiles); // Eliminar los tiles marcados
-    }
-    setSelectedTiles([]); // Limpiar selectedTiles
-    //console.log(board.cells);
-  };
-  
+    gameRules();
+}, []);
+
+useEffect(() => {
+  if (selectedTiles.length > 1) {
+    removeSelectedTiles();
+  }
+}, [selectedTiles]);
+
+
+  function completeSelectedTiles(erantzuna) {
+    //sortu array bat LLM-an emaitzakin
+    let erantzunaArray = JSON.parse(erantzuna).map(coordenada => ({ fila: coordenada[0], columna: coordenada[1] }));
+    
+    setSelectedTiles(prevSelectedTiles => {
+      // Obtener una copia de los valores actuales en selectedTiles
+      const updatedSelectedTiles = [...prevSelectedTiles];
+        erantzunaArray.forEach(casilla => {
+              const valorCasilla = board.cells[casilla.fila][casilla.columna];
+              updatedSelectedTiles.push(valorCasilla);
+          });
+        return updatedSelectedTiles;
+    });
+  } 
+
+  function removeSelectedTiles() {
+    console.log(selectedTiles); 
+    board.clearMarkedTiles(selectedTiles); 
+    setTimeout(() => {
+        setSelectedTiles([]);
+    }, 3000);
+}
+    
+    
+let tablero = board.cells;
+
+function encontrarLosTresMasGrandes(tablero) {
+  const secuencias = [];
+  const visitados = new Set();
+
+  for (let fila = 0; fila < tablero.length; fila++) {
+      for (let columna = 0; columna < tablero[fila].length; columna++) {
+          if (tablero[fila][columna] !== null && !visitados.has(`${fila},${columna}`)) {
+              const secuenciaActual = [];
+              encontrarSecuencia(tablero, fila, columna, null, visitados, secuenciaActual, []);
+              if (secuenciaEsContinua(secuenciaActual, tablero)) {
+                  secuencias.push(secuenciaActual);
+              }
+          }
+      }
+  }
+
+  secuencias.sort((a, b) => b.length - a.length);
+  return secuencias.slice(0, 3);
+}
+
+function vecinos(tablero, fila, columna) {
+  const vecinos = [];
+  if (tablero && tablero.length > 0 && tablero[0] && tablero[0].length > 0) {
+      for (let i = -1; i <= 1; i++) {
+          for (let j = -1; j <= 1; j++) {
+              if (i === 0 && j === 0) continue;
+              const vecinoFila = fila + i;
+              const vecinoColumna = columna + j;
+              if (vecinoFila >= 0 && vecinoFila < tablero.length && vecinoColumna >= 0 && vecinoColumna < tablero[0].length) {
+                  vecinos.push([vecinoFila, vecinoColumna]);
+              }
+          }
+      }
+  }
+  return vecinos;
+}
+
+function encontrarSecuencia(tablero, fila, columna, direccionAnterior, visitados, secuenciaActual, movimientosPrevios) {
+  if (tablero[fila][columna] !== null && !visitados.has(`${fila},${columna}`)) {
+      const valor = tablero[fila][columna].value;
+      secuenciaActual.push([fila, columna]);
+      visitados.add(`${fila},${columna}`);
+      const vecinosDisponibles = vecinos(tablero, fila, columna).filter(vecino => !movimientosPrevios.includes(`${vecino[0]},${vecino[1]}`));
+      for (const [vecinoFila, vecinoColumna] of vecinosDisponibles) {
+          if (tablero[vecinoFila][vecinoColumna] !== null && tablero[vecinoFila][vecinoColumna].value === valor && (!direccionAnterior || (vecinoFila - fila === direccionAnterior[0] && vecinoColumna - columna === direccionAnterior[1]))) {
+              encontrarSecuencia(tablero, vecinoFila, vecinoColumna, [vecinoFila - fila, vecinoColumna - columna], visitados, secuenciaActual, [...movimientosPrevios, `${fila},${columna}`]);
+          }
+      }
+  }
+}
+
+function secuenciaEsContinua(secuencia, tablero) {
+  const visitados = new Set();
+  for (let i = 0; i < secuencia.length; i++) {
+      const [fila, columna] = secuencia[i];
+      const clave = `${fila},${columna}`;
+      if (visitados.has(clave) || !vecinos(tablero, fila, columna).some(vecino => secuencia.some(tile => tile[0] === vecino[0] && tile[1] === vecino[1]))) {
+          return false;
+      }
+      visitados.add(clave);
+  }
+  return true;
+}
+
+// Encontrar las tres secuencias más grandes
+const tresMasGrandes = encontrarLosTresMasGrandes(tablero);
+const jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
+console.log(jsonString);
+
 
 
   //lehenengo beidatu zutabeak eta gero errenkadak
@@ -157,10 +154,6 @@ const LLMBoardView = ({ boardArray, pilaArray }) => {
                     (selectedTile) =>
                       selectedTile.row === tile.row && selectedTile.column === tile.column
                   )}
-                  isMouseDown={isMouseDown}
-                  onMouseDown={() => handleTileMouseDown(tile)}
-                  onMouseOver={() => handleTileMouseOver(tile)}
-                  onMouseUp={handleTileMouseUp}
                   />);
     } else {
       column.push(<div key={rowIndex * board.size + colIndex} className="empty-cell" />);
