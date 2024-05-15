@@ -16,10 +16,11 @@ class Tile {
 }
 
 class Board {
-  constructor() {
+  constructor(boardArray,pilaArray) {
     this.tiles = [];
     this.cells = [];
-    this.pila = [];
+    console.log(pilaArray);
+    this.pila = pilaArray;
     this.score = 0;
     this.objective = 340;
     this.size = 9; // Changed size to 9 as per the hexagonal structure
@@ -34,8 +35,7 @@ class Board {
       [null, null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), this.addTile(), null, null],
       [null, null, null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), null, null, null]
     ];
-    this.fillBoardWithTiles();
-    this.createPila();
+    this.fillBoardWithTiles(boardArray);
     this.won = false;
   }
 
@@ -46,34 +46,18 @@ class Board {
   }
 
 
-  fillBoardWithTiles() {
-    const possibleValues = [2, 8, 256];
+  fillBoardWithTiles(boardArray) {
+    let index = 0;
     this.cells.forEach((row, rowIndex) => {
       row.forEach((tile, columnIndex) => {
         if (tile !== null && tile.value === 0) {
-          var randomIndex = Math.floor(Math.random() * possibleValues.length);
-          var randomValue = possibleValues[randomIndex];
+          const randomValue = boardArray[index];
           this.cells[rowIndex][columnIndex] = this.addTile(randomValue, rowIndex, columnIndex);
+          index += 1;
         }
       });
-    }); 
-    //console.log(this.cells);
+    });
   }
-
-
-  createPila() {
-    const possibleValues = [2, 8, 256];
-    const pila = [];
-    const targetElements = 150; // Número deseado de elementos en la pila
-
-    while (pila.length < targetElements) {
-      const randomIndex = Math.floor(Math.random() * possibleValues.length);
-      const randomValue = possibleValues[randomIndex];
-      pila.push(randomValue);
-    }
-
-    this.pila = pila;
-}
 
 
   clearMarkedTiles = (tilesToRemove) => {
@@ -81,7 +65,7 @@ class Board {
       row.forEach((tile, colIndex) => {
         if (tile && tilesToRemove.some((t) => t === tile)) {
           // Obtener el último número de la pila
-          const replacementValue = this.pila.pop();
+          let replacementValue = this.pila.pop();
           let newTile = this.addTile(replacementValue, rowIndex, colIndex);
           newTile.new = true;
           this.cells[rowIndex][colIndex] = newTile;
@@ -93,8 +77,7 @@ class Board {
 
 
   calculateScore = (tilesToRemove) => {
-    const bonusFactor = tilesToRemove.length; // Factor de bonificación basado en la cantidad de Tiles seleccionados
-    // Calcular el puntaje usando la fórmula
+    const bonusFactor = tilesToRemove.length;
     const score = (bonusFactor - 1) + (bonusFactor - 2);
     this.score += score;
   };

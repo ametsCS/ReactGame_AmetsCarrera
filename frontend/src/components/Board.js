@@ -3,8 +3,8 @@ import Tile from "./Tile";
 import { Board } from "../helper";
 import GameOverlay from "./GameOverlay";
 
-const BoardView = () => {
-  const [board, setBoard] = useState(new Board()); //tableroa sortu
+const BoardView = ({ boardArray, pilaArray }) => {
+  const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
 
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
   const [isMouseDown, setIsMouseDown] = useState(false); //mouse klikatuta dagoen edo ez
@@ -17,7 +17,7 @@ const BoardView = () => {
       setFirstTileValue(tile.value);
     }
   };
-  
+
   const handleTileMouseOver = (tile) => {
     if (isMouseDown && tile.value === firstTileValue && tile.value !== 0 &&
         !selectedTiles.some(selectedTile => selectedTile.row === tile.row && selectedTile.column === tile.column)) {
@@ -78,7 +78,7 @@ const BoardView = () => {
 
 
   const resetGame = () => {
-    setBoard(new Board());
+    setBoard(new Board(boardArray, pilaArray));
   };
 
   //console.log(board.cells);

@@ -10,7 +10,7 @@ const groq = new Groq({
   dangerouslyAllowBrowser: true
 });
 
-const LLMBoardView = () => {
+const LLMBoardView = ({boardArray, pilaArray}) => {
 
   useEffect(() => {
     async function fetchData(content) {
@@ -34,7 +34,7 @@ const LLMBoardView = () => {
     fetchData("Explain the importance of fast language models");
   }, []); // Empty dependency array ensures that this effect runs only once, similar to componentDidMount
 
-  const [board, setBoard] = useState(new Board()); //tableroa sortu
+  const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
 
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
   const [isMouseDown, setIsMouseDown] = useState(false); //mouse klikatuta dagoen edo ez
@@ -110,7 +110,7 @@ const LLMBoardView = () => {
 
 
   const resetGame = () => {
-    setBoard(new Board());
+    setBoard(new Board(boardArray, pilaArray));
   };
 
   //console.log(board.cells);
