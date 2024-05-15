@@ -47,7 +47,7 @@ class Board {
 
 
   fillBoardWithTiles() {
-    const possibleValues = [2, 4, 8];
+    const possibleValues = [2, 8, 256];
     this.cells.forEach((row, rowIndex) => {
       row.forEach((tile, columnIndex) => {
         if (tile !== null && tile.value === 0) {
@@ -62,9 +62,9 @@ class Board {
 
 
   createPila() {
-    const possibleValues = [2, 4, 8];
+    const possibleValues = [2, 8, 256];
     const pila = [];
-    const targetElements = 0; // Número deseado de elementos en la pila
+    const targetElements = 150; // Número deseado de elementos en la pila
 
     while (pila.length < targetElements) {
       const randomIndex = Math.floor(Math.random() * possibleValues.length);
