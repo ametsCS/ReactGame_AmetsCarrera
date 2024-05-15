@@ -11,38 +11,41 @@ const groq = new Groq({
   dangerouslyAllowBrowser: true
 });
 
-const LLMBoardView = ({ boardArray, pilaArray }) => {
+const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd }) => {
 
   const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
 
   useEffect(() => {
-    async function gameRules() {
+    if (yourTurn) {
+      async function gameRules() {
         try {
-            const gameRules = {
-                role: "system",
-                content: jsonString + " select one of those 3 arrays and return just the array without text"
-            };
-            const response = await groq.chat.completions.create({
-                messages: [gameRules],
-                model: "Llama3-70b-8192"
-            });
-            let erantzuna = response.choices[0]?.message?.content || "";
-            console.log(erantzuna);
-            completeSelectedTiles(erantzuna);
+          const gameRules = {
+            role: "system",
+            content: jsonString + " select one of those 3 arrays and return just the array without text"
+          };
+          const response = await groq.chat.completions.create({
+            messages: [gameRules],
+            model: "Llama3-70b-8192"
+          });
+          let erantzuna = response.choices[0]?.message?.content || "";
+          //console.log(erantzuna);
+          completeSelectedTiles(erantzuna);
         } catch (error) {
-            console.error('Error informing game rules:', error);
+          console.error('Error informing game rules:', error);
         }
+      }
+
+      gameRules();
     }
+  }, [yourTurn]);
 
-    gameRules();
-}, []);
 
-useEffect(() => {
-  if (selectedTiles.length > 1) {
-    removeSelectedTiles();
-  }
-}, [selectedTiles]);
+  useEffect(() => {
+    if (selectedTiles.length > 1) {
+      removeSelectedTiles();
+    }
+  }, [selectedTiles]);
 
 
   function completeSelectedTiles(erantzuna) {
@@ -61,84 +64,83 @@ useEffect(() => {
   } 
 
   function removeSelectedTiles() {
-    console.log(selectedTiles); 
+    //console.log(selectedTiles); 
     board.clearMarkedTiles(selectedTiles); 
     setTimeout(() => {
         setSelectedTiles([]);
+        onTurnEnd();
     }, 3000);
 }
     
     
-let tablero = board.cells;
+  let tablero = board.cells;
 
-function encontrarLosTresMasGrandes(tablero) {
-  const secuencias = [];
-  const visitados = new Set();
+  function encontrarLosTresMasGrandes(tablero) {
+    const secuencias = [];
+    const visitados = new Set();
 
-  for (let fila = 0; fila < tablero.length; fila++) {
+    for (let fila = 0; fila < tablero.length; fila++) {
       for (let columna = 0; columna < tablero[fila].length; columna++) {
-          if (tablero[fila][columna] !== null && !visitados.has(`${fila},${columna}`)) {
-              const secuenciaActual = [];
-              encontrarSecuencia(tablero, fila, columna, null, visitados, secuenciaActual, []);
-              if (secuenciaEsContinua(secuenciaActual, tablero)) {
-                  secuencias.push(secuenciaActual);
-              }
+        if (tablero[fila][columna] !== null && !visitados.has(`${fila},${columna}`)) {
+          const secuenciaActual = [];
+          encontrarSecuencia(tablero, fila, columna, visitados, secuenciaActual);
+          if (secuenciaEsContinua(secuenciaActual, tablero)) {
+            secuencias.push(secuenciaActual);
           }
+        }
       }
+    }
+
+    secuencias.sort((a, b) => b.length - a.length);
+    return secuencias.slice(0, 3);
   }
 
-  secuencias.sort((a, b) => b.length - a.length);
-  return secuencias.slice(0, 3);
-}
-
-function vecinos(tablero, fila, columna) {
-  const vecinos = [];
-  if (tablero && tablero.length > 0 && tablero[0] && tablero[0].length > 0) {
-      for (let i = -1; i <= 1; i++) {
-          for (let j = -1; j <= 1; j++) {
-              if (i === 0 && j === 0) continue;
-              const vecinoFila = fila + i;
-              const vecinoColumna = columna + j;
-              if (vecinoFila >= 0 && vecinoFila < tablero.length && vecinoColumna >= 0 && vecinoColumna < tablero[0].length) {
-                  vecinos.push([vecinoFila, vecinoColumna]);
-              }
-          }
+  function vecinos(tablero, fila, columna) {
+    const direcciones = [
+      [-1, 0], [1, 0], // Vertical
+      [0, -1], [0, 1], // Horizontal
+      [-1, 1], [1, -1] // Diagonal
+    ];
+    const vecinos = [];
+    direcciones.forEach(([df, dc]) => {
+      const nuevoFila = fila + df;
+      const nuevoColumna = columna + dc;
+      if (nuevoFila >= 0 && nuevoFila < tablero.length && nuevoColumna >= 0 && nuevoColumna < tablero[0].length) {
+        vecinos.push([nuevoFila, nuevoColumna]);
       }
+    });
+    return vecinos;
   }
-  return vecinos;
-}
 
-function encontrarSecuencia(tablero, fila, columna, direccionAnterior, visitados, secuenciaActual, movimientosPrevios) {
-  if (tablero[fila][columna] !== null && !visitados.has(`${fila},${columna}`)) {
-      const valor = tablero[fila][columna].value;
-      secuenciaActual.push([fila, columna]);
-      visitados.add(`${fila},${columna}`);
-      const vecinosDisponibles = vecinos(tablero, fila, columna).filter(vecino => !movimientosPrevios.includes(`${vecino[0]},${vecino[1]}`));
-      for (const [vecinoFila, vecinoColumna] of vecinosDisponibles) {
-          if (tablero[vecinoFila][vecinoColumna] !== null && tablero[vecinoFila][vecinoColumna].value === valor && (!direccionAnterior || (vecinoFila - fila === direccionAnterior[0] && vecinoColumna - columna === direccionAnterior[1]))) {
-              encontrarSecuencia(tablero, vecinoFila, vecinoColumna, [vecinoFila - fila, vecinoColumna - columna], visitados, secuenciaActual, [...movimientosPrevios, `${fila},${columna}`]);
-          }
+  function encontrarSecuencia(tablero, fila, columna, visitados, secuenciaActual) {
+    const valor = tablero[fila][columna].value;
+    secuenciaActual.push([fila, columna]);
+    visitados.add(`${fila},${columna}`);
+    
+    const vecinosDisponibles = vecinos(tablero, fila, columna);
+    vecinosDisponibles.forEach(([vecinoFila, vecinoColumna]) => {
+      if (tablero[vecinoFila][vecinoColumna] !== null && tablero[vecinoFila][vecinoColumna].value === valor && !visitados.has(`${vecinoFila},${vecinoColumna}`)) {
+        encontrarSecuencia(tablero, vecinoFila, vecinoColumna, visitados, secuenciaActual);
       }
+    });
   }
-}
 
-function secuenciaEsContinua(secuencia, tablero) {
-  const visitados = new Set();
-  for (let i = 0; i < secuencia.length; i++) {
+  function secuenciaEsContinua(secuencia, tablero) {
+    if (secuencia.length < 2) return true;
+    const visitados = new Set(secuencia.map(([fila, columna]) => `${fila},${columna}`));
+    for (let i = 0; i < secuencia.length; i++) {
       const [fila, columna] = secuencia[i];
-      const clave = `${fila},${columna}`;
-      if (visitados.has(clave) || !vecinos(tablero, fila, columna).some(vecino => secuencia.some(tile => tile[0] === vecino[0] && tile[1] === vecino[1]))) {
-          return false;
+      const tieneVecino = vecinos(tablero, fila, columna).some(([vecinoFila, vecinoColumna]) => visitados.has(`${vecinoFila},${vecinoColumna}`));
+      if (!tieneVecino) {
+        return false;
       }
-      visitados.add(clave);
+    }
+    return true;
   }
-  return true;
-}
 
-// Encontrar las tres secuencias más grandes
-const tresMasGrandes = encontrarLosTresMasGrandes(tablero);
-const jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
-console.log(jsonString);
+  const tresMasGrandes = encontrarLosTresMasGrandes(tablero);
+  const jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
+  //console.log(jsonString);
 
 
 
@@ -161,11 +163,7 @@ console.log(jsonString);
   }
   cellsAndTiles.push(<div key={colIndex}>{column}</div>);
 }
-
-
-  const resetGame = () => {
-    setBoard(new Board(boardArray, pilaArray));
-  };
+  
 
   //console.log(board.cells);
   //console.log(cellsAndTiles);
@@ -173,9 +171,6 @@ console.log(jsonString);
   return (
     <div>
       <div className="details-box">
-        <div className="resetButton" onClick={resetGame}>
-          NEW GAME
-        </div>
         <div className="score-box">
           <div className="score-header">SCORE</div>
           <div>{board.score}</div>
@@ -185,9 +180,14 @@ console.log(jsonString);
           <div>{board.objective}</div>
         </div>
       </div>
+      <div
+        className={`turn-indicator ${yourTurn ? 'active' : 'inactive'}`}
+      >
+        LLM
+      </div>
       <div className="board">
-          {cellsAndTiles}
-        <GameOverlay onRestart={resetGame} board={board} />
+        {cellsAndTiles}
+        <GameOverlay board={board} />
       </div>
     </div>
   );

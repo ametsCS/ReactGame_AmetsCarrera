@@ -3,7 +3,7 @@ import Tile from "./Tile";
 import { Board } from "../helper";
 import GameOverlay from "./GameOverlay";
 
-const BoardView = ({ boardArray, pilaArray }) => {
+const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame }) => {
   const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
   //console.log(JSON.stringify(board.cells));
 
@@ -12,14 +12,14 @@ const BoardView = ({ boardArray, pilaArray }) => {
   const [firstTileValue, setFirstTileValue] = useState(null); //lehenengo tilearen balioa
 
   const handleTileMouseDown = (tile) => {
-    if (tile.value !== 0) {
+    if (!yourTurn || tile.value === 0) return;
       setIsMouseDown(true);
       setSelectedTiles([tile]);
       setFirstTileValue(tile.value);
-    }
   };
 
   const handleTileMouseOver = (tile) => {
+    if(!yourTurn) return;
     if (isMouseDown && tile.value === firstTileValue && tile.value !== 0 &&
         !selectedTiles.some(selectedTile => selectedTile.row === tile.row && selectedTile.column === tile.column)) {
       if (selectedTiles.length > 0) {
@@ -34,6 +34,7 @@ const BoardView = ({ boardArray, pilaArray }) => {
   };
   
   const handleTileMouseUp = () => {
+    if (!yourTurn) return;
     setIsMouseDown(false);
     setFirstTileValue(null); // Reiniciar el valor del primer Tile cuando se suelta el mouse
     
@@ -49,6 +50,9 @@ const BoardView = ({ boardArray, pilaArray }) => {
     }
     setSelectedTiles([]); // Limpiar selectedTiles
     //console.log(board.cells);
+    setTimeout(() => {
+      onTurnEnd(); // Cambiar el turno
+    }, 2500); // Cambia el valor de 3000 al tiempo de retraso deseado en milisegundos
   };
   
 
@@ -78,17 +82,13 @@ const BoardView = ({ boardArray, pilaArray }) => {
 }
 
 
-  const resetGame = () => {
-    setBoard(new Board(boardArray, pilaArray));
-  };
-
   //console.log(board.cells);
   //console.log(cellsAndTiles);
   //console.log(selectedTiles);
   return (
     <div>
       <div className="details-box">
-        <div className="resetButton" onClick={resetGame}>
+        <div className="resetButton" onClick={onNewGame}>
           NEW GAME
         </div>
         <div className="score-box">
@@ -100,9 +100,14 @@ const BoardView = ({ boardArray, pilaArray }) => {
           <div>{board.objective}</div>
         </div>
       </div>
+      <div
+        className={`turn-indicator ${yourTurn ? 'active' : 'inactive'}`}
+      >
+        YOUR TURN
+      </div>
       <div className="board">
-          {cellsAndTiles}
-        <GameOverlay onRestart={resetGame} board={board} />
+        {cellsAndTiles}
+        <GameOverlay board={board} />
       </div>
     </div>
   );
