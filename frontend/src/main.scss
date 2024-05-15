@@ -6,12 +6,35 @@
 body {
   display: flex;
   background-color: #57407c;
-  flex-direction: column;
   justify-content: center;
-  align-content: center;
-  align-items: center;
   font-family: "Clear Sans", sans-serif;
   font-size: 21px;
+}
+
+.boards-container {
+  display: flex;
+  justify-content: space-between; 
+  margin: 0 60px; 
+}
+
+.divider {
+  width: 10px; 
+  background-color: #3d2963;
+  height: 800px;
+}
+
+.board-wrapper {
+  flex: 1; 
+  padding: 20px; 
+}
+
+.board-wrapper:first-child {
+  margin-right: 50px;
+  //border-right: 2px solid white; /* Aplicar un borde derecho al primer tablero */
+}
+
+.board-wrapper:last-child {
+  margin-left: 50px;
 }
 
 .text {

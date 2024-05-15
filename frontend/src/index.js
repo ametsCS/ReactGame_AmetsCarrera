@@ -61,7 +61,16 @@ function App() {
 
   */
 
-  return <BoardView />;
+  return <div className="boards-container">
+          <div className="board-wrapper">
+            <BoardView />
+          </div>
+          <div className="divider"></div>
+          <div className="board-wrapper">
+            <BoardView />
+          </div>
+         </div>
+         ;
 }
 
 const root = document.getElementById('root');

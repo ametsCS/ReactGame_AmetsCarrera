@@ -11,22 +11,22 @@ const BoardView = () => {
   const [firstTileValue, setFirstTileValue] = useState(null); //lehenengo tilearen balioa
 
   const handleTileMouseDown = (tile) => {
-    setIsMouseDown(true);
-    setSelectedTiles([tile]);
-    setFirstTileValue(tile.value); // Almacenar el valor del primer Tile seleccionado
+    if (tile.value !== 0) {
+      setIsMouseDown(true);
+      setSelectedTiles([tile]);
+      setFirstTileValue(tile.value);
+    }
   };
-
+  
   const handleTileMouseOver = (tile) => {
-    if (isMouseDown && tile.value === firstTileValue && !selectedTiles.some(selectedTile => selectedTile.row === tile.row && selectedTile.column === tile.column)) {
-      // Verificar si hay algún Tile en selectedTiles
+    if (isMouseDown && tile.value === firstTileValue && tile.value !== 0 &&
+        !selectedTiles.some(selectedTile => selectedTile.row === tile.row && selectedTile.column === tile.column)) {
       if (selectedTiles.length > 0) {
         const lastTile = selectedTiles[selectedTiles.length - 1];
-        // Verificar si el nuevo Tile es vecino del último Tile en selectedTiles
         if (Math.abs(tile.row - lastTile.row) <= 1 && Math.abs(tile.column - lastTile.column) <= 1) {
           setSelectedTiles((prevTiles) => [...prevTiles, tile]);
         }
       } else {
-        // Si no hay ningún Tile en selectedTiles, agregar el nuevo Tile directamente
         setSelectedTiles((prevTiles) => [...prevTiles, tile]);
       }
     }

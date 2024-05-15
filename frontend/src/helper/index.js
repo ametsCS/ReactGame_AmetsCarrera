@@ -64,7 +64,7 @@ class Board {
   createPila() {
     const possibleValues = [2, 4, 8];
     const pila = [];
-    const targetElements = 150; // Número deseado de elementos en la pila
+    const targetElements = 0; // Número deseado de elementos en la pila
 
     while (pila.length < targetElements) {
       const randomIndex = Math.floor(Math.random() * possibleValues.length);
