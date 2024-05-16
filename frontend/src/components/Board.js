@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Tile from "./Tile";
 import { Board } from "../helper";
 import GameOverlay from "./GameOverlay";
 
-const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame }) => {
+
+const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame, onWin, isWinner, onLose, isLoser }) => {
   const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
   //console.log(JSON.stringify(board.cells));
 
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
   const [isMouseDown, setIsMouseDown] = useState(false); //mouse klikatuta dagoen edo ez
   const [firstTileValue, setFirstTileValue] = useState(null); //lehenengo tilearen balioa
+
 
   const handleTileMouseDown = (tile) => {
     if (!yourTurn || tile.value === 0) return;
@@ -51,10 +53,19 @@ const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame }) =>
     setSelectedTiles([]); // Limpiar selectedTiles
     //console.log(board.cells);
     setTimeout(() => {
+      emaitza();
       onTurnEnd(); // Cambiar el turno
-    }, 2500); // Cambia el valor de 3000 al tiempo de retraso deseado en milisegundos
+    }, 2000); // Cambia el valor de 3000 al tiempo de retraso deseado en milisegundos
   };
   
+  function emaitza(){
+    if (board.hasWon()) {
+      onWin();
+    }
+    if (board.hasLost()) {
+      onLose();
+    }
+  };
 
 
   //lehenengo beidatu zutabeak eta gero errenkadak
@@ -107,7 +118,7 @@ const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame }) =>
       </div>
       <div className="board">
         {cellsAndTiles}
-        <GameOverlay board={board} />
+        <GameOverlay onRestart={onNewGame} win={isWinner} lose={isLoser}/>
       </div>
     </div>
   );

@@ -11,13 +11,14 @@ const groq = new Groq({
   dangerouslyAllowBrowser: true
 });
 
-const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd }) => {
+const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWinner, onLose, isLoser }) => {
 
   const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
+  
 
   useEffect(() => {
-    if (yourTurn) {
+    if (yourTurn && isWinner === null) {
       async function gameRules() {
         try {
           const gameRules = {
@@ -68,11 +69,24 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd }) => {
     board.clearMarkedTiles(selectedTiles); 
     setTimeout(() => {
         setSelectedTiles([]);
-        onTurnEnd();
+        emaitza();
+        setTimeout(() => {
+            if (isLoser!==false){
+              onTurnEnd();
+            }
+        }, 2000);
     }, 3000);
-}
+  }
     
-    
+  function emaitza(){
+    if (board.hasWon()) {
+      onWin();
+    }
+    if (board.hasLost()) {
+      onLose();
+    }
+  };
+
   let tablero = board.cells;
 
   function encontrarLosTresMasGrandes(tablero) {
@@ -81,7 +95,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd }) => {
 
     for (let fila = 0; fila < tablero.length; fila++) {
       for (let columna = 0; columna < tablero[fila].length; columna++) {
-        if (tablero[fila][columna] !== null && !visitados.has(`${fila},${columna}`)) {
+        if (tablero[fila][columna] !== null && tablero[fila][columna].value !== 0 && !visitados.has(`${fila},${columna}`)) {
           const secuenciaActual = [];
           encontrarSecuencia(tablero, fila, columna, visitados, secuenciaActual);
           if (secuenciaEsContinua(secuenciaActual, tablero)) {
@@ -119,7 +133,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd }) => {
     
     const vecinosDisponibles = vecinos(tablero, fila, columna);
     vecinosDisponibles.forEach(([vecinoFila, vecinoColumna]) => {
-      if (tablero[vecinoFila][vecinoColumna] !== null && tablero[vecinoFila][vecinoColumna].value === valor && !visitados.has(`${vecinoFila},${vecinoColumna}`)) {
+      if (tablero[vecinoFila][vecinoColumna] !== null && tablero[vecinoFila][vecinoColumna].value === valor && tablero[vecinoFila][vecinoColumna].value !== 0 && !visitados.has(`${vecinoFila},${vecinoColumna}`)) {
         encontrarSecuencia(tablero, vecinoFila, vecinoColumna, visitados, secuenciaActual);
       }
     });
@@ -165,6 +179,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd }) => {
 }
   
 
+  //console.log(isWinner);
   //console.log(board.cells);
   //console.log(cellsAndTiles);
   //console.log(selectedTiles);
@@ -187,7 +202,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd }) => {
       </div>
       <div className="board">
         {cellsAndTiles}
-        <GameOverlay board={board} />
+        <GameOverlay win={isWinner} lose={isLoser}/>
       </div>
     </div>
   );

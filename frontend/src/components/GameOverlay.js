@@ -1,8 +1,9 @@
 import React from "react";
 import TryAgainLogo from "../assets/img/try-again.gif";
 import Patch from "../assets/img/patch.gif";
-const GameOverlay = ({ onRestart, board }) => {
-  if (board.hasWon()) {
+
+const GameOverlay = ({ onRestart, win, lose }) => {
+  if (win===true) {
     return (
       <div className="winner" onClick={onRestart}>
         <img
@@ -16,7 +17,7 @@ const GameOverlay = ({ onRestart, board }) => {
         />
       </div>
     );;
-  } else if (board.hasLost()) {
+  } if (win===false || lose===true) {
     return (
       <div className="gameOver" onClick={onRestart}>
         <img
@@ -30,8 +31,10 @@ const GameOverlay = ({ onRestart, board }) => {
         />
       </div>
     );
+  }else{
+    return;
   }
-  return null;
+
 };
 
 export default GameOverlay;

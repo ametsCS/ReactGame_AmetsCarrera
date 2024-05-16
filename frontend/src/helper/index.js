@@ -118,6 +118,7 @@ class Board {
             }
         });
     });
+    this.lost = !hasNeighbor;
     return !hasNeighbor;
 }
 
