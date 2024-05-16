@@ -193,28 +193,26 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
 }
   
 
-  //console.log(isWinner);
+
   //console.log(board.cells);
   //console.log(cellsAndTiles);
   //console.log(selectedTiles);
   return (
     <div>
       <div className="details-box">
-      <div className="disadvantages-box">
-        <Disadvantages onModelDegradation={modelDegradation}/> 
-      </div>
-      <div className={`score-box ${board.won ? 'score-box-win' : board.lost ? 'score-box-lose' : ''}`}>
+        <div className="disadvantages-box">
+          <Disadvantages onModelDegradation={modelDegradation}/> 
+        </div>
+        <div className={`score-box ${isWinner ? 'score-box-win' : isLoser ? 'score-box-lose' : ''}`}>
           <div className="score-header">SCORE</div>
           <div>{board.score}</div>
         </div>
-        <div className={`objective-box ${board.won ? 'objective-box-win' : board.lost ? 'objective-box-lose' : ''}`}>
+        <div className={`objective-box ${isWinner ? 'objective-box-win' : isLoser ? 'objective-box-lose' : ''}`}>
           <div className="objective-header">OBJECTIVE</div>
           <div>{board.objective}</div>
         </div>
       </div>
-      <div
-        className={`turn-indicator ${yourTurn ? 'active' : 'inactive'}`}
-      >
+      <div className={`turn-indicator ${yourTurn ? 'active' : 'inactive'}`}>
         LLM ({LLM_model})
       </div>
       <div className="board">

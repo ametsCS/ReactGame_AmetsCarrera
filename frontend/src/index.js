@@ -48,7 +48,7 @@ function App() {
   //sortu bakoitzarentzat pila bat, baina biak balio berdinekin
     let pilaArray1 = [];
     let pilaArray2 = [];
-    const targetElements = 110; // Número deseado de elementos en la pila
+    const targetElements = 0; // Número deseado de elementos en la pila
 
     while (pilaArray1.length < targetElements) {
       const randomIndex = Math.floor(Math.random() * possibleValues.length);
