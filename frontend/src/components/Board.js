@@ -106,11 +106,11 @@ const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame, onWi
         <div className="resetButton" onClick={onNewGame}>
           NEW GAME
         </div>
-        <div className="score-box">
+        <div className={`score-box ${board.won ? 'score-box-win' : board.lost ? 'score-box-lose' : ''}`}>
           <div className="score-header">SCORE</div>
           <div>{board.score}</div>
         </div>
-        <div className="objective-box">
+        <div className={`objective-box ${board.won ? 'objective-box-win' : board.lost ? 'objective-box-lose' : ''}`}>
           <div className="objective-header">OBJECTIVE</div>
           <div>{board.objective}</div>
         </div>

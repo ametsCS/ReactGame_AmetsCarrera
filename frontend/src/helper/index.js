@@ -20,7 +20,7 @@ class Board {
     this.cells = [];
     this.pila = pilaArray;
     this.score = 0;
-    this.objective = 340;
+    this.objective = 250;
     this.size = 9; // Changed size to 9 as per the hexagonal structure
     this.cells = [ // Define the hexagonal structure
       [null, null, null, this.addTile(), this.addTile(), this.addTile(), this.addTile(), null, null, null],
@@ -35,6 +35,7 @@ class Board {
     ];
     this.fillBoardWithTiles(boardArray);
     this.won = false;
+    this.lost = false;
   }
 
   addTile(value, row, column) {
@@ -82,7 +83,7 @@ class Board {
 
   
   hasWon() {
-    if (this.score >= 340) {
+    if (this.score >= 250) {
       this.won = true;
       return this.won;
     }
