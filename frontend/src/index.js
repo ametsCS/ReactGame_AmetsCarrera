@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import BoardView from "./components/Board";
 import LLMBoardView from "./components/LLM_Board";
 import "./main.scss";
-import "./styles.scss";
 
 function App() {
 
@@ -92,7 +91,7 @@ function App() {
                onLose={() => declareLoser(2)} 
                isLoser={loseStatus.board2Lost}  
                onLossEnd={onLossEnd}  
-               isLossEnd={lossEnd}  
+               isLossEnd={lossEnd} 
               />
           </div>
          </div>

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Tile from "./Tile";
 import { Board } from "../helper";
 import GameOverlay from "./GameOverlay";
+import { Disadvantages } from "../helper/Disadvantages";
 
 
 const Groq = require("groq-sdk");
@@ -15,7 +16,13 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
 
   const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
-  
+  const [LLM_model, setLLMModel] = useState("Llama3-70b-8192");
+
+  const modelDegradation = () => {
+    const currentModel = LLM_model;
+    const nextModel = currentModel === "Llama3-70b-8192" ? "Gemma-7b-It" : "Llama3-70b-8192";
+    setLLMModel(nextModel);
+  };
 
   const gameRules = async () => {
     try {
@@ -25,7 +32,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
       };
       const response = await groq.chat.completions.create({
         messages: [gameRulesData],
-        model: "Llama3-70b-8192"
+        model: LLM_model
       });
       let erantzuna = response.choices[0]?.message?.content || "";
       //console.log(erantzuna);
@@ -193,6 +200,9 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   return (
     <div>
       <div className="details-box">
+      <div className="disadvantages-box">
+        <Disadvantages onModelDegradation={modelDegradation}/> 
+      </div>
       <div className={`score-box ${board.won ? 'score-box-win' : board.lost ? 'score-box-lose' : ''}`}>
           <div className="score-header">SCORE</div>
           <div>{board.score}</div>
@@ -205,7 +215,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
       <div
         className={`turn-indicator ${yourTurn ? 'active' : 'inactive'}`}
       >
-        LLM
+        LLM ({LLM_model})
       </div>
       <div className="board">
         {cellsAndTiles}
