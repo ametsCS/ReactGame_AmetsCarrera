@@ -2,7 +2,7 @@ import React from "react";
 import TryAgainLogo from "../assets/img/try-again.gif";
 import Patch from "../assets/img/patch.gif";
 
-const GameOverlay = ({ onRestart, win, lose }) => {
+const GameOverlay = ({ onRestart, win, lose, lossEnd }) => {
   if (win===true) {
     return (
       <div className="winner" onClick={onRestart}>
@@ -17,7 +17,7 @@ const GameOverlay = ({ onRestart, win, lose }) => {
         />
       </div>
     );;
-  } if (win===false || lose===true) {
+  } if (win===false || lose===true || lossEnd===true) {
     return (
       <div className="gameOver" onClick={onRestart}>
         <img

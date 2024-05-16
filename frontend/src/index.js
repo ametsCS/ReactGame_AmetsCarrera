@@ -10,6 +10,7 @@ function App() {
   const [yourTurn, setYourTurn] = useState(true);
   const [winStatus, setWinStatus] = useState({ board1Won: null, board2Won: null });
   const [loseStatus, setLoseStatus] = useState({ board1Lost: null, board2Lost: null });
+  const [lossEnd, setLossEnd] = useState(false);
 
   const toggleTurn = () => {
     setYourTurn(prevTurn => !prevTurn);
@@ -29,6 +30,10 @@ function App() {
     } else {
       setLoseStatus({ board1Lost: false, board2Lost: true });
     }
+  };
+
+  const onLossEnd = () => {
+    setLossEnd(true);
   };
 
   //sortu board-eko balioak bientzat berdinak
@@ -71,6 +76,8 @@ function App() {
               isWinner={winStatus.board1Won}
               onLose={() => declareLoser(1)}
               isLoser={loseStatus.board1Lost}
+              onLossEnd={onLossEnd}
+              isLossEnd={lossEnd}
             />
           </div>
           <div className="divider"></div>
@@ -83,7 +90,9 @@ function App() {
                onWin={() => declareWinner(2)} 
                isWinner={winStatus.board2Won}    
                onLose={() => declareLoser(2)} 
-               isLoser={loseStatus.board2Lost}      
+               isLoser={loseStatus.board2Lost}  
+               onLossEnd={onLossEnd}  
+               isLossEnd={lossEnd}  
               />
           </div>
          </div>

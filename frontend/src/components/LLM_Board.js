@@ -11,32 +11,32 @@ const groq = new Groq({
   dangerouslyAllowBrowser: true
 });
 
-const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWinner, onLose, isLoser }) => {
+const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWinner, onLose, isLoser, onLossEnd, isLossEnd }) => {
 
   const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
   
 
+  const gameRules = async () => {
+    try {
+      const gameRulesData = {
+        role: "system",
+        content: jsonString + " select one of those 3 arrays and return just the array without text"
+      };
+      const response = await groq.chat.completions.create({
+        messages: [gameRulesData],
+        model: "Llama3-70b-8192"
+      });
+      let erantzuna = response.choices[0]?.message?.content || "";
+      //console.log(erantzuna);
+      completeSelectedTiles(erantzuna);
+    } catch (error) {
+      console.error('Error informing game rules:', error);
+    }
+  };
+  
   useEffect(() => {
     if (yourTurn && isWinner === null) {
-      async function gameRules() {
-        try {
-          const gameRules = {
-            role: "system",
-            content: jsonString + " select one of those 3 arrays and return just the array without text"
-          };
-          const response = await groq.chat.completions.create({
-            messages: [gameRules],
-            model: "Llama3-70b-8192"
-          });
-          let erantzuna = response.choices[0]?.message?.content || "";
-          //console.log(erantzuna);
-          completeSelectedTiles(erantzuna);
-        } catch (error) {
-          console.error('Error informing game rules:', error);
-        }
-      }
-
       gameRules();
     }
   }, [yourTurn]);
@@ -73,6 +73,10 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
         setTimeout(() => {
             if (isLoser!==false){
               onTurnEnd();
+            }else{
+              tresMasGrandes = encontrarLosTresMasGrandes(tablero);
+              jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
+              gameRules();
             }
         }, 2000);
     }, 3000);
@@ -81,11 +85,14 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   function emaitza(){
     if (board.hasWon()) {
       onWin();
+    }else if (board.hasLost() && isLoser===false) {
+      onLossEnd();
     }
-    if (board.hasLost()) {
+    else if (board.hasLost()) {
       onLose();
     }
   };
+
 
   let tablero = board.cells;
 
@@ -152,8 +159,8 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
     return true;
   }
 
-  const tresMasGrandes = encontrarLosTresMasGrandes(tablero);
-  const jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
+  let tresMasGrandes = encontrarLosTresMasGrandes(tablero);
+  let jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
   //console.log(jsonString);
 
 
@@ -202,7 +209,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
       </div>
       <div className="board">
         {cellsAndTiles}
-        <GameOverlay win={isWinner} lose={isLoser}/>
+        <GameOverlay win={isWinner} lose={isLoser} lossEnd={isLossEnd}/>
       </div>
     </div>
   );

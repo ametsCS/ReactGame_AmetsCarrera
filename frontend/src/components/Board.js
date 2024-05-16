@@ -4,7 +4,7 @@ import { Board } from "../helper";
 import GameOverlay from "./GameOverlay";
 
 
-const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame, onWin, isWinner, onLose, isLoser }) => {
+const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame, onWin, isWinner, onLose, isLoser, onLossEnd, isLossEnd }) => {
   const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
   //console.log(JSON.stringify(board.cells));
 
@@ -54,15 +54,19 @@ const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame, onWi
     //console.log(board.cells);
     setTimeout(() => {
       emaitza();
-      onTurnEnd(); // Cambiar el turno
+      if (isLoser!==false){
+        onTurnEnd();
+      }
     }, 2000); // Cambia el valor de 3000 al tiempo de retraso deseado en milisegundos
   };
   
   function emaitza(){
     if (board.hasWon()) {
       onWin();
+    }else if (board.hasLost() && isLoser===false) {
+      onLossEnd();
     }
-    if (board.hasLost()) {
+    else if (board.hasLost()) {
       onLose();
     }
   };
@@ -118,7 +122,7 @@ const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame, onWi
       </div>
       <div className="board">
         {cellsAndTiles}
-        <GameOverlay onRestart={onNewGame} win={isWinner} lose={isLoser}/>
+        <GameOverlay onRestart={onNewGame} win={isWinner} lose={isLoser} lossEnd={isLossEnd}/>
       </div>
     </div>
   );
