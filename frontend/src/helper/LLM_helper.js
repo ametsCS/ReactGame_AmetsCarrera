@@ -4,7 +4,7 @@ export class LLM_helper {
       const direcciones = [
         [-1, 0], [1, 0], // Vertical
         [0, -1], [0, 1], // Horizontal
-        [-1, 1], [1, -1] // Diagonal
+        [-1, 1], [1, -1], // Diagonal
       ];
       const vecinos = [];
       direcciones.forEach(([df, dc]) => {

@@ -23,27 +23,26 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
 
   const LLM_makeMove = async () => {
     try {
-      const gameRulesData = {
+      const makeMoveData = {
         role: "system",
         content: jsonString + " select one of those 3 arrays and return just the array without text"
       };
       const response = await groq.chat.completions.create({
-        messages: [gameRulesData],
+        messages: [makeMoveData],
         model: LLM_model
       });
       let erantzuna = response.choices[0]?.message?.content || "";
       //console.log(erantzuna);
       completeSelectedTiles(erantzuna);
     } catch (error) {
-      console.error('Error informing game rules:', error);
+      console.error('Error informing LLM move:', error);
     }
   };
   
   useEffect(() => {
-    if ((yourTurn && isWinner === null && (isLoser===false || isLoser===null)) || triggerEffect) {
+    if ((yourTurn && isWinner === null && (isLoser===false || isLoser===null))) { 
       calculateSequences();
       LLM_makeMove();
-      setTriggerEffect(false); 
     }
   }, [yourTurn, triggerEffect]);
 
@@ -71,20 +70,20 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   } 
 
   function removeSelectedTiles() {
-    //console.log(selectedTiles); 
-    board.clearMarkedTiles(selectedTiles); 
+    //console.log(selectedTiles);
+    board.clearMarkedTiles(selectedTiles);  
     setTimeout(() => {
         setSelectedTiles([]);
         emaitza();
         setTimeout(() => {
-            if(isLossEnd===true || board.won===true){
+            if((board.hasLost() && isLoser===false) || board.won===true){
               return;
             }else if (isLoser===true){
               onTurnEnd();
             }else if (isLoser===null){
               onTurnEnd();
             }else if (isLoser===false){
-              setTriggerEffect(true); // LLM deia egiteko
+              setTriggerEffect(prev => !prev); // LLM deia egiteko
             }
         }, 2000);
     }, 3000);
@@ -95,7 +94,6 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
       onWin();
     }else if (board.hasLost() && isLoser===false) {
       onLossEnd();
-      onLose();
     }
     else if (board.hasLost()) {
       onLose();
@@ -149,11 +147,11 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
         <div className="disadvantages-box">
           <Disadvantages onModelDegradation={modelDegradation}/> 
         </div>
-        <div className={`score-box ${isWinner ? 'score-box-win' : isLoser ? 'score-box-lose' : ''}`}>
+        <div className={`score-box ${board.won ? 'score-box-win' : board.lost ? 'score-box-lose' : ''}`}>
           <div className="score-header">SCORE</div>
           <div>{board.score}</div>
         </div>
-        <div className={`objective-box ${isWinner ? 'objective-box-win' : isLoser ? 'objective-box-lose' : ''}`}>
+        <div className={`objective-box ${board.won ? 'objective-box-win' : board.lost ? 'objective-box-lose' : ''}`}>
           <div className="objective-header">OBJECTIVE</div>
           <div>{board.objective}</div>
         </div>

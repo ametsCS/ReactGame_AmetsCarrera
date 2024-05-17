@@ -99,10 +99,12 @@ class Board {
                 const directions = [
                     { di: 0, dj: -1 }, // izquierda
                     { di: 1, dj: -1 }, // arriba-izquierda
-                    { di: 1, dj: 0 },  // arriba-derecha
+                    { di: -1, dj: -1 },  // abajo-izquierda
                     { di: 0, dj: 1 },  // derecha
+                    { di: 1, dj: 1 },  // arriba-derecha
                     { di: -1, dj: 1 }, // abajo-derecha
-                    { di: -1, dj: 0 }  // abajo-izquierda
+                    { di: 1, dj: 0 }, // arriba
+                    { di: -1, dj: 0 }, // abajo
                 ];
 
                 // Verificar si hay al menos un tile vecino del mismo valor para el tile actual
