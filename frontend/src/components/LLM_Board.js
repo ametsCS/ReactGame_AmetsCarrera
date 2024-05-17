@@ -22,7 +22,6 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   let jsonString = "";
 
   const LLM_makeMove = async () => {
-    console.log(contentString);
     try {
       const makeMoveData = {
         role: "system",
@@ -33,7 +32,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
         model: LLM_model
       });
       let erantzuna = response.choices[0]?.message?.content || "";
-      console.log(erantzuna);
+      //console.log(erantzuna);
       completeSelectedTiles(erantzuna);
     } catch (error) {
       console.error('Error informing LLM move:', error);
@@ -104,7 +103,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   function calculateSequences(){
     let tresMasGrandes = LLM_helper.encontrarLosTresMasGrandes(board.cells, isMaxPathDegradation);
     jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
-    console.log(jsonString);
+    //console.log(jsonString);
   }
 
 
