@@ -25,7 +25,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
     try {
       const makeMoveData = {
         role: "system",
-        content: jsonString + " select one of those 3 arrays and return just the array without text"
+        content: jsonString + contentString
       };
       const response = await groq.chat.completions.create({
         messages: [makeMoveData],
@@ -101,19 +101,32 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   };
 
   function calculateSequences(){
-    let tresMasGrandes = LLM_helper.encontrarLosTresMasGrandes(board.cells);
+    let tresMasGrandes = LLM_helper.encontrarLosTresMasGrandes(board.cells, isMaxPathDegradation);
     jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
     //console.log(jsonString);
   }
 
 
   const [LLM_model, setLLMModel] = useState("Llama3-70b-8192");
+  const [isMaxPathDegradation, setIsMaxPathDegradation] = useState(false);
+  const [contentString, setContentString] = useState(" select one of those 3 arrays, the biggest one, and return just the array without text ");
 
   const modelDegradation = () => {
     const currentModel = LLM_model;
     const nextModel = currentModel === "Llama3-70b-8192" ? "Gemma-7b-It" : "Llama3-70b-8192";
     setLLMModel(nextModel);
   };
+
+  function informationPenalty() {
+    const currentContent = contentString;
+    const nextContent = currentContent === " select one of those 3 arrays, the biggest one, and return just the array without text " ? " select one of those 3 arrays, the smallest one, and return just the array without text " : " select one of those 3 arrays, the biggest one, and return just the array without text ";
+    setContentString(nextContent);
+  };
+
+  const maxPathDegradation = () => {
+    setIsMaxPathDegradation(!isMaxPathDegradation);
+  };
+
 
 
   //lehenengo beidatu zutabeak eta gero errenkadak
@@ -145,7 +158,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
     <div>
       <div className="details-box">
         <div className="disadvantages-box">
-          <Disadvantages onModelDegradation={modelDegradation}/> 
+          <Disadvantages onModelDegradation={modelDegradation} onMaxPathDegradation={maxPathDegradation} onInformationPenalty={informationPenalty}/> 
         </div>
         <div className={`score-box ${board.won ? 'score-box-win' : board.lost ? 'score-box-lose' : ''}`}>
           <div className="score-header">SCORE</div>

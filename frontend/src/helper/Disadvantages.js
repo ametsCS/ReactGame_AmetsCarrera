@@ -1,19 +1,40 @@
 import React, { useState } from 'react'
 
-export const Disadvantages = ({ onModelDegradation, onMaxPathDegradation }) => {
+let ModelDegradation = false;
+let MaxPathDegradation = false;
+let InformationPenalty = false;
+
+export const Disadvantages = ({ onModelDegradation, onMaxPathDegradation, onInformationPenalty }) => {
     const [selectedOption, setSelectedOption] = useState("");
 
     const handleSelectChange = (event) => {
         const buttonNumber = event.target.value;
 
-        if (buttonNumber === '1') {
+        if (buttonNumber === '1' && !ModelDegradation) {
+            ModelDegradation = true;
             onModelDegradation();
-        } else if (buttonNumber === '2') {
+        } 
+        else if (buttonNumber === '2' && !MaxPathDegradation) {
+            MaxPathDegradation = true;
             onMaxPathDegradation();
-        } else if (buttonNumber === '3') {
-            alert('Information penalty');
-        } else if (buttonNumber === 'cancel') {
-            onModelDegradation();
+        }
+        else if (buttonNumber === '3' && !InformationPenalty) {
+            InformationPenalty = true;
+            onInformationPenalty();
+        } 
+        else if (buttonNumber === 'cancel') {
+            if (ModelDegradation) {
+                onModelDegradation();
+                ModelDegradation = false;
+            }
+            if (MaxPathDegradation) {
+                onMaxPathDegradation();
+                MaxPathDegradation = false;
+            }
+            if (InformationPenalty) {
+                onInformationPenalty();
+                InformationPenalty = false;
+            }
             setSelectedOption(""); 
             return;
         }
