@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Tile from "./Tile";
 import { Board } from "../helper";
 import GameOverlay from "./GameOverlay";
+import { LLM_helper } from "../helper/LLM_helper";
 import { Disadvantages } from "../helper/Disadvantages";
 
 
@@ -16,15 +17,11 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
 
   const [board, setBoard] = useState(new Board(boardArray, pilaArray)); //tableroa sortu
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
-  const [LLM_model, setLLMModel] = useState("Llama3-70b-8192");
+  const [triggerEffect, setTriggerEffect] = useState(false); // LLM deia egiteko state
 
-  const modelDegradation = () => {
-    const currentModel = LLM_model;
-    const nextModel = currentModel === "Llama3-70b-8192" ? "Gemma-7b-It" : "Llama3-70b-8192";
-    setLLMModel(nextModel);
-  };
+  let jsonString = "";
 
-  const gameRules = async () => {
+  const LLM_makeMove = async () => {
     try {
       const gameRulesData = {
         role: "system",
@@ -43,10 +40,12 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   };
   
   useEffect(() => {
-    if (yourTurn && isWinner === null) {
-      gameRules();
+    if ((yourTurn && isWinner === null && (isLoser===false || isLoser===null)) || triggerEffect) {
+      calculateSequences();
+      LLM_makeMove();
+      setTriggerEffect(false); 
     }
-  }, [yourTurn]);
+  }, [yourTurn, triggerEffect]);
 
 
   useEffect(() => {
@@ -78,12 +77,14 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
         setSelectedTiles([]);
         emaitza();
         setTimeout(() => {
-            if (isLoser!==false){
+            if(isLossEnd===true || board.won===true){
+              return;
+            }else if (isLoser===true){
               onTurnEnd();
-            }else{
-              tresMasGrandes = encontrarLosTresMasGrandes(tablero);
-              jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
-              gameRules();
+            }else if (isLoser===null){
+              onTurnEnd();
+            }else if (isLoser===false){
+              setTriggerEffect(true); // LLM deia egiteko
             }
         }, 2000);
     }, 3000);
@@ -94,82 +95,27 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
       onWin();
     }else if (board.hasLost() && isLoser===false) {
       onLossEnd();
+      onLose();
     }
     else if (board.hasLost()) {
       onLose();
     }
   };
 
-
-  let tablero = board.cells;
-
-  function encontrarLosTresMasGrandes(tablero) {
-    const secuencias = [];
-    const visitados = new Set();
-
-    for (let fila = 0; fila < tablero.length; fila++) {
-      for (let columna = 0; columna < tablero[fila].length; columna++) {
-        if (tablero[fila][columna] !== null && tablero[fila][columna].value !== 0 && !visitados.has(`${fila},${columna}`)) {
-          const secuenciaActual = [];
-          encontrarSecuencia(tablero, fila, columna, visitados, secuenciaActual);
-          if (secuenciaEsContinua(secuenciaActual, tablero)) {
-            secuencias.push(secuenciaActual);
-          }
-        }
-      }
-    }
-
-    secuencias.sort((a, b) => b.length - a.length);
-    return secuencias.slice(0, 3);
+  function calculateSequences(){
+    let tresMasGrandes = LLM_helper.encontrarLosTresMasGrandes(board.cells);
+    jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
+    //console.log(jsonString);
   }
 
-  function vecinos(tablero, fila, columna) {
-    const direcciones = [
-      [-1, 0], [1, 0], // Vertical
-      [0, -1], [0, 1], // Horizontal
-      [-1, 1], [1, -1] // Diagonal
-    ];
-    const vecinos = [];
-    direcciones.forEach(([df, dc]) => {
-      const nuevoFila = fila + df;
-      const nuevoColumna = columna + dc;
-      if (nuevoFila >= 0 && nuevoFila < tablero.length && nuevoColumna >= 0 && nuevoColumna < tablero[0].length) {
-        vecinos.push([nuevoFila, nuevoColumna]);
-      }
-    });
-    return vecinos;
-  }
 
-  function encontrarSecuencia(tablero, fila, columna, visitados, secuenciaActual) {
-    const valor = tablero[fila][columna].value;
-    secuenciaActual.push([fila, columna]);
-    visitados.add(`${fila},${columna}`);
-    
-    const vecinosDisponibles = vecinos(tablero, fila, columna);
-    vecinosDisponibles.forEach(([vecinoFila, vecinoColumna]) => {
-      if (tablero[vecinoFila][vecinoColumna] !== null && tablero[vecinoFila][vecinoColumna].value === valor && tablero[vecinoFila][vecinoColumna].value !== 0 && !visitados.has(`${vecinoFila},${vecinoColumna}`)) {
-        encontrarSecuencia(tablero, vecinoFila, vecinoColumna, visitados, secuenciaActual);
-      }
-    });
-  }
+  const [LLM_model, setLLMModel] = useState("Llama3-70b-8192");
 
-  function secuenciaEsContinua(secuencia, tablero) {
-    if (secuencia.length < 2) return true;
-    const visitados = new Set(secuencia.map(([fila, columna]) => `${fila},${columna}`));
-    for (let i = 0; i < secuencia.length; i++) {
-      const [fila, columna] = secuencia[i];
-      const tieneVecino = vecinos(tablero, fila, columna).some(([vecinoFila, vecinoColumna]) => visitados.has(`${vecinoFila},${vecinoColumna}`));
-      if (!tieneVecino) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  let tresMasGrandes = encontrarLosTresMasGrandes(tablero);
-  let jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
-  //console.log(jsonString);
-
+  const modelDegradation = () => {
+    const currentModel = LLM_model;
+    const nextModel = currentModel === "Llama3-70b-8192" ? "Gemma-7b-It" : "Llama3-70b-8192";
+    setLLMModel(nextModel);
+  };
 
 
   //lehenengo beidatu zutabeak eta gero errenkadak

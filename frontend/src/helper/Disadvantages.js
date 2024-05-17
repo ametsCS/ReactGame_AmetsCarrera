@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-export const Disadvantages = ({ onModelDegradation }) => {
+export const Disadvantages = ({ onModelDegradation, onMaxPathDegradation }) => {
     const [selectedOption, setSelectedOption] = useState("");
 
     const handleSelectChange = (event) => {
@@ -9,7 +9,7 @@ export const Disadvantages = ({ onModelDegradation }) => {
         if (buttonNumber === '1') {
             onModelDegradation();
         } else if (buttonNumber === '2') {
-            alert('Max path degradation');
+            onMaxPathDegradation();
         } else if (buttonNumber === '3') {
             alert('Information penalty');
         } else if (buttonNumber === 'cancel') {

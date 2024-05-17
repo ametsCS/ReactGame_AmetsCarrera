@@ -47,17 +47,20 @@ const BoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onNewGame, onWi
           return { ...tile, markForDeletion: true };
         });
       });
-
       board.clearMarkedTiles(selectedTiles); // Eliminar los tiles marcados
+      setSelectedTiles([]); // Limpiar selectedTiles
+      //console.log(board.cells);
+      setTimeout(() => {
+        emaitza();
+        if (board.won){
+          return;
+        }else if (isLossEnd===true){
+          return;
+        }else if (isLoser!==false){
+          onTurnEnd();
+        }
+      }, 2000); // Cambia el valor de 3000 al tiempo de retraso deseado en milisegundos
     }
-    setSelectedTiles([]); // Limpiar selectedTiles
-    //console.log(board.cells);
-    setTimeout(() => {
-      emaitza();
-      if (isLoser!==false){
-        onTurnEnd();
-      }
-    }, 2000); // Cambia el valor de 3000 al tiempo de retraso deseado en milisegundos
   };
   
   function emaitza(){
