@@ -4,7 +4,8 @@ export class LLM_helper {
         const direcciones = [
           [-1, 0], [1, 0], // Vertical
           [0, -1], [0, 1], // Horizontal
-          [-1, 1], [1, -1], [-1, -1], [1, 1] // Diagonal
+          [-1, 1], [1, -1], 
+          [-1, -1], [1, 1] // Diagonal
         ];
         const vecinos = [];
         direcciones.forEach(([df, dc]) => {
@@ -17,7 +18,7 @@ export class LLM_helper {
         return vecinos;
       }
     
-      static encontrarSecuencia(tablero, fila, columna, visitados, secuenciaActual) {
+      static encontrarSecuencia(tablero, fila, columna, visitados, secuenciaActual, isMaxPathDegradation) {
         const valor = tablero[fila][columna].value;
         secuenciaActual.push([fila, columna]);
         visitados.add(`${fila},${columna}`);
@@ -25,9 +26,13 @@ export class LLM_helper {
         const vecinosDisponibles = this.vecinos(tablero, fila, columna);
         vecinosDisponibles.forEach(([vecinoFila, vecinoColumna]) => {
           if (tablero[vecinoFila][vecinoColumna] !== null && tablero[vecinoFila][vecinoColumna].value === valor && !visitados.has(`${vecinoFila},${vecinoColumna}`)) {
-            this.encontrarSecuencia(tablero, vecinoFila, vecinoColumna, visitados, secuenciaActual);
+            this.encontrarSecuencia(tablero, vecinoFila, vecinoColumna, visitados, secuenciaActual, isMaxPathDegradation);
           }
         });
+        //Gatazka 2
+        if (isMaxPathDegradation && secuenciaActual.length > 8) {
+          secuenciaActual.pop();
+        }
       }
     
       static secuenciaEsContinua(secuencia, tablero) {
@@ -55,7 +60,7 @@ export class LLM_helper {
         return visitados.size === secuencia.length;
       }
     
-      static encontrarLosTresMasGrandes(tablero) {
+      static encontrarLosTresMasGrandes(tablero, isMaxPathDegradation) {
         const secuencias = [];
         const visitados = new Set();
     
@@ -63,7 +68,7 @@ export class LLM_helper {
           for (let columna = 0; columna < tablero[fila].length; columna++) {
             if (tablero[fila][columna] !== null && tablero[fila][columna].value !== 0 && !visitados.has(`${fila},${columna}`)) {
               const secuenciaActual = [];
-              this.encontrarSecuencia(tablero, fila, columna, visitados, secuenciaActual);
+              this.encontrarSecuencia(tablero, fila, columna, visitados, secuenciaActual, isMaxPathDegradation);
               if (this.secuenciaEsContinua(secuenciaActual, tablero)) {
                 secuencias.push(secuenciaActual);
               }
