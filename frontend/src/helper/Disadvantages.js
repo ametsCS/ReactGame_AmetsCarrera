@@ -51,7 +51,7 @@ export const Disadvantages = ({ onModelDegradation, onMaxPathDegradation, onInfo
                     <option value="" disabled hidden>DISADVANTAGES</option>
                 )}
                 <option value="1">Model degradation</option>
-                <option value="2">Max path degradation</option>
+                <option value="2">Max path degradation (max 6) </option>
                 <option value="3">Information penalty</option>
             </select>
         </div>

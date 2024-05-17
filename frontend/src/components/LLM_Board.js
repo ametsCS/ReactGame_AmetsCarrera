@@ -22,6 +22,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   let jsonString = "";
 
   const LLM_makeMove = async () => {
+    console.log(contentString);
     try {
       const makeMoveData = {
         role: "system",
@@ -32,7 +33,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
         model: LLM_model
       });
       let erantzuna = response.choices[0]?.message?.content || "";
-      //console.log(erantzuna);
+      console.log(erantzuna);
       completeSelectedTiles(erantzuna);
     } catch (error) {
       console.error('Error informing LLM move:', error);
@@ -103,13 +104,13 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   function calculateSequences(){
     let tresMasGrandes = LLM_helper.encontrarLosTresMasGrandes(board.cells, isMaxPathDegradation);
     jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
-    //console.log(jsonString);
+    console.log(jsonString);
   }
 
 
   const [LLM_model, setLLMModel] = useState("Llama3-70b-8192");
   const [isMaxPathDegradation, setIsMaxPathDegradation] = useState(false);
-  const [contentString, setContentString] = useState(" select one of those 3 arrays, the biggest one, and return just the array without text ");
+  const [contentString, setContentString] = useState(" There are 3 different arrays in here, select just the SECOND LONGEST one of these arrays, and return just the array without any text or explanation. The length of the array is defined by the number of elements in it.");
 
   const modelDegradation = () => {
     const currentModel = LLM_model;
@@ -119,7 +120,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
 
   function informationPenalty() {
     const currentContent = contentString;
-    const nextContent = currentContent === " select one of those 3 arrays, the biggest one, and return just the array without text " ? " select one of those 3 arrays, the smallest one, and return just the array without text " : " select one of those 3 arrays, the biggest one, and return just the array without text ";
+    const nextContent = currentContent === " There are 3 different arrays in here, select just the SECOND LONGEST one of these arrays, and return just the array without any text or explanation. The length of the array is defined by the number of elements in it. " ? "  There are 3 different arrays in here, select just the SHORTEST one of these arrays, and return just the array without any text or explanation. The length of the array is defined by the number of elements in it. " : "  There are 3 different arrays in here, select just the SECOND LONGEST one of these arrays, and return just the array without any text or explanation. The length of the array is defined by the number of elements in it. ";
     setContentString(nextContent);
   };
 

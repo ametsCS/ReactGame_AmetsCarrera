@@ -30,7 +30,7 @@ export class LLM_helper {
           }
         });
         //Gatazka 2
-        if (isMaxPathDegradation && secuenciaActual.length > 8) {
+        if (isMaxPathDegradation && secuenciaActual.length > 6) {
           secuenciaActual.pop();
         }
       }
