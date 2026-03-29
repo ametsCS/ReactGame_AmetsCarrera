@@ -2,6 +2,7 @@
   "name": "proiekto",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "proxy": "http://localhost:4000",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",

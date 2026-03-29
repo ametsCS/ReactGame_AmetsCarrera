@@ -6,7 +6,9 @@ import GameOverlay from "./GameOverlay";
 import { LLM_helper } from "../helper/LLM_helper";
 import { Disadvantages } from "../helper/Disadvantages";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || (process.env.NODE_ENV === "development" ? "http://localhost:4000" : "");
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL ||
+  (process.env.NODE_ENV === "development" ? "http://localhost:4000" : "/react-game-api");
 const PRIMARY_MODEL_ID = "llama-3.3-70b-versatile";
 const DEGRADED_MODEL_ID = "llama-3.1-8b-instant";
 const PRIMARY_MODEL_LABEL = "Llama 3.3 70B";

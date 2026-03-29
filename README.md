@@ -58,12 +58,11 @@ The Docker frontend build injects `http://localhost:4000` as the API base URL, s
 - Set the frontend to call the backend through `REACT_APP_API_BASE_URL`
 - Never commit Groq secrets to the repo
 
-### Suggested split
+### Current deployment shape
 
-- Frontend Vercel project:
-  `react-game.amets.engineer`
-- Backend Vercel project:
-  `react-game-api.amets.engineer`
+- Portfolio serves the React game at `https://amets.engineer/react-game`
+- Portfolio proxies `https://amets.engineer/react-game-api/*` to `https://react-game-api.amets.engineer/*`
+- Backend stays deployed independently at `react-game-api.amets.engineer`
 
 The backend includes `api/index.js` so it can be deployed as its own Vercel project while still using `index.js` locally.
 
