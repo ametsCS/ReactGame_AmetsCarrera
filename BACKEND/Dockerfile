@@ -1,5 +1,5 @@
-# Usa una imagen base de Node.js
-FROM node:14
+# Usa una imagen base de Node.js moderna
+FROM node:20-alpine
 
 # Establece el directorio de trabajo
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instala las dependencias
-RUN npm install
+RUN npm ci
 
 # Copia el resto de los archivos
 COPY . .

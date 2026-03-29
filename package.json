@@ -1,0 +1,12 @@
+{
+  "name": "react-game-amets-carrera",
+  "private": true,
+  "scripts": {
+    "install:backend": "npm --prefix BACKEND install",
+    "install:frontend": "npm --prefix frontend install",
+    "dev:backend": "npm --prefix BACKEND run dev",
+    "dev:frontend": "npm --prefix frontend start",
+    "build:frontend": "npm --prefix frontend run build",
+    "docker:up": "docker-compose up --build"
+  }
+}

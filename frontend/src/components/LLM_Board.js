@@ -6,12 +6,11 @@ import GameOverlay from "./GameOverlay";
 import { LLM_helper } from "../helper/LLM_helper";
 import { Disadvantages } from "../helper/Disadvantages";
 
-
-const Groq = require("groq-sdk");
-const groq = new Groq({
-  apiKey: process.env.REACT_APP_GROQ_API_KEY,
-  dangerouslyAllowBrowser: true
-});
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || (process.env.NODE_ENV === "development" ? "http://localhost:4000" : "");
+const PRIMARY_MODEL_ID = "llama-3.3-70b-versatile";
+const DEGRADED_MODEL_ID = "llama-3.1-8b-instant";
+const PRIMARY_MODEL_LABEL = "Llama 3.3 70B";
+const DEGRADED_MODEL_LABEL = "Llama 3.1 8B";
 
 const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWinner, onLose, isLoser, onLossEnd, isLossEnd }) => {
 
@@ -19,21 +18,26 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   const [selectedTiles, setSelectedTiles] = useState([]); //hautatutako tileak
   const [triggerEffect, setTriggerEffect] = useState(false); // LLM deia egiteko state
 
-  let jsonString = "";
-
-  const LLM_makeMove = async () => {
+  const LLM_makeMove = async (candidateSequences) => {
     try {
-      const makeMoveData = {
-        role: "system",
-        content: jsonString + contentString
-      };
-      const response = await groq.chat.completions.create({
-        messages: [makeMoveData],
-        model: LLM_model
+      const response = await fetch(`${API_BASE_URL}/api/llm-move`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          candidateSequences,
+          instruction: contentString,
+          model: LLM_model
+        })
       });
-      let erantzuna = response.choices[0]?.message?.content || "";
-      //console.log(erantzuna);
-      completeSelectedTiles(erantzuna);
+
+      if (!response.ok) {
+        throw new Error("LLM move request failed");
+      }
+
+      const data = await response.json();
+      completeSelectedTiles(data.move);
     } catch (error) {
       console.error('Error informing LLM move:', error);
     }
@@ -41,8 +45,8 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   
   useEffect(() => {
     if ((yourTurn && isWinner === null && (isLoser===false || isLoser===null))) { 
-      calculateSequences();
-      LLM_makeMove();
+      const candidateSequences = calculateSequences();
+      LLM_makeMove(candidateSequences);
     }
   }, [yourTurn, triggerEffect]);
 
@@ -55,8 +59,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
 
 
   function completeSelectedTiles(erantzuna) {
-    //sortu array bat LLM-an emaitzakin
-    let erantzunaArray = JSON.parse(erantzuna).map(coordenada => ({ fila: coordenada[0], columna: coordenada[1] }));
+    const erantzunaArray = erantzuna.map(coordenada => ({ fila: coordenada[0], columna: coordenada[1] }));
     
     setSelectedTiles(prevSelectedTiles => {
       // Obtener una copia de los valores actuales en selectedTiles
@@ -101,19 +104,17 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
   };
 
   function calculateSequences(){
-    let tresMasGrandes = LLM_helper.encontrarLosTresMasGrandes(board.cells, isMaxPathDegradation);
-    jsonString = tresMasGrandes.map(JSON.stringify).join('\t');
-    //console.log(jsonString);
+    return LLM_helper.encontrarLosTresMasGrandes(board.cells, isMaxPathDegradation);
   }
 
 
-  const [LLM_model, setLLMModel] = useState("Llama3-70b-8192");
+  const [LLM_model, setLLMModel] = useState(PRIMARY_MODEL_ID);
   const [isMaxPathDegradation, setIsMaxPathDegradation] = useState(false);
   const [contentString, setContentString] = useState(" There are 3 different arrays in here, select just the SECOND LONGEST one of these arrays, and return just the array without any text or explanation. The length of the array is defined by the number of elements in it.");
 
   const modelDegradation = () => {
     const currentModel = LLM_model;
-    const nextModel = currentModel === "Llama3-70b-8192" ? "Gemma-7b-It" : "Llama3-70b-8192";
+    const nextModel = currentModel === PRIMARY_MODEL_ID ? DEGRADED_MODEL_ID : PRIMARY_MODEL_ID;
     setLLMModel(nextModel);
   };
 
@@ -170,7 +171,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
         </div>
       </div>
       <div className={`turn-indicator ${yourTurn ? 'active' : 'inactive'}`}>
-        LLM ({LLM_model})
+        LLM ({LLM_model === PRIMARY_MODEL_ID ? PRIMARY_MODEL_LABEL : DEGRADED_MODEL_LABEL})
       </div>
       <div className="board">
         {cellsAndTiles}

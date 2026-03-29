@@ -1,17 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-
-const app = express();
-const port = 4000;
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(cors());
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+const port = process.env.PORT || 4000;
+const app = require("./app");
 
 app.listen(port, () => {
-  console.log(`app listening at http://localhost:${port}`);
-}); 
+  console.log(`React Game backend listening at http://localhost:${port}`);
+});

@@ -1,14 +1,17 @@
-# Usa una imagen base de Node.js
-FROM node:14
+# Usa una imagen base de Node.js moderna
+FROM node:20-alpine
 
 # Establece el directorio de trabajo
 WORKDIR /app
+
+ARG REACT_APP_API_BASE_URL=http://localhost:4000
+ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 
 # Copia los archivos del proyecto
 COPY package*.json ./
 
 # Instala las dependencias
-RUN npm install
+RUN npm ci
 
 # Copia el resto de los archivos
 COPY . .

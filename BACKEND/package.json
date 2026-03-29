@@ -1,9 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Server-side API for the React Game",
   "main": "index.js",
   "scripts": {
+    "dev": "node index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,6 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.19.2"
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "groq-sdk": "^0.31.0"
   }
 }
