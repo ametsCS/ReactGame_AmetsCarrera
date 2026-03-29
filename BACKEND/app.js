@@ -106,10 +106,10 @@ const moveResponseFormat = {
           minItems: 1,
           items: {
             type: "array",
-            minItems: 2,
+            minItems: 1,
             maxItems: 2,
             items: {
-              type: "integer"
+              type: ["integer", "string"]
             }
           }
         }
@@ -125,6 +125,31 @@ const normalizeSequence = (sequence) =>
     (sequence || []).map((coordinate) => [Number(coordinate?.[0]), Number(coordinate?.[1])])
   );
 
+const normalizeCoordinate = (coordinate) => {
+  if (Array.isArray(coordinate) && coordinate.length === 1) {
+    return normalizeCoordinate(coordinate[0]);
+  }
+
+  if (Array.isArray(coordinate) && coordinate.length >= 2) {
+    return [Number(coordinate[0]), Number(coordinate[1])];
+  }
+
+  if (typeof coordinate === "string") {
+    const normalized = coordinate.trim();
+
+    if (/^[0-9]{2}$/.test(normalized)) {
+      return [Number(normalized[0]), Number(normalized[1])];
+    }
+  }
+
+  if (Number.isInteger(coordinate)) {
+    const normalized = String(coordinate).padStart(2, "0");
+    return [Number(normalized[0]), Number(normalized[1])];
+  }
+
+  throw new Error(`Invalid coordinate returned by model: ${JSON.stringify(coordinate)}`);
+};
+
 const parseMoveResponse = (content) => {
   if (!content) {
     throw new Error("Empty response from model");
@@ -137,7 +162,7 @@ const parseMoveResponse = (content) => {
     throw new Error("Model response did not include a valid move array");
   }
 
-  return parsed.move;
+  return parsed.move.map(normalizeCoordinate);
 };
 
 const resolveMove = (move, candidateSequences) => {
