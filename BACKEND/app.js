@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const express = require("express");
-const cors = require("cors");
 const Groq = require("groq-sdk");
 
 const app = express();
@@ -18,20 +17,48 @@ const allowedOrigins = (process.env.FRONTEND_ORIGIN || "http://localhost:3000")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+const setCorsHeaders = (req, res) => {
+  const origin = req.headers.origin;
+
+  if (!origin || !allowedOrigins.includes(origin)) {
+    return false;
+  }
+
+  res.header("Access-Control-Allow-Origin", origin);
+  res.header("Vary", "Origin");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,POST,OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    req.headers["access-control-request-headers"] || "Content-Type"
+  );
+
+  return true;
+};
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-        return;
-      }
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
 
-      callback(new Error("Origin not allowed by CORS"));
-    }
-  })
-);
+  if (!origin) {
+    next();
+    return;
+  }
+
+  if (!setCorsHeaders(req, res)) {
+    res.status(403).json({
+      error: "Origin not allowed by CORS"
+    });
+    return;
+  }
+
+  if (req.method === "OPTIONS") {
+    res.sendStatus(204);
+    return;
+  }
+
+  next();
+});
 
 app.get("/", (_req, res) => {
   res.send("React Game backend is running.");
