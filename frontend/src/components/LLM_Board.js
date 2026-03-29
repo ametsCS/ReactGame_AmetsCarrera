@@ -10,10 +10,10 @@ import { Disadvantages } from "../helper/Disadvantages";
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL ||
   (process.env.NODE_ENV === "development" ? "http://localhost:4000" : "/react-game-api");
-const PRIMARY_MODEL_ID = "llama-3.3-70b-versatile";
-const DEGRADED_MODEL_ID = "llama-3.1-8b-instant";
-const PRIMARY_MODEL_LABEL = "Llama 3.3 70B";
-const DEGRADED_MODEL_LABEL = "Llama 3.1 8B";
+const PRIMARY_MODEL_ID = "openai/gpt-oss-120b";
+const DEGRADED_MODEL_ID = "openai/gpt-oss-20b";
+const PRIMARY_MODEL_LABEL = "GPT OSS 120B";
+const DEGRADED_MODEL_LABEL = "GPT OSS 20B";
 
 const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWinner, onLose, isLoser, onLossEnd, isLossEnd }) => {
   const [board] = useState(new Board(boardArray, pilaArray)); //tableroa sortu

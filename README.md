@@ -28,9 +28,9 @@ The frontend also has a CRA `proxy` to `http://localhost:4000`, so local develop
 
 ```env
 GROQ_API_KEY=replace_with_new_groq_key
-GROQ_MODEL_PRIMARY=llama-3.3-70b-versatile
-GROQ_MODEL_DEGRADED=llama-3.1-8b-instant
-FRONTEND_ORIGIN=http://localhost:3000
+GROQ_MODEL_PRIMARY=openai/gpt-oss-120b
+GROQ_MODEL_DEGRADED=openai/gpt-oss-20b
+FRONTEND_ORIGIN=http://localhost:3000,https://react-game.amets.engineer
 ```
 
 ### Frontend

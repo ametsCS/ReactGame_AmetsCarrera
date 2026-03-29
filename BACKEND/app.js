@@ -5,8 +5,8 @@ const Groq = require("groq-sdk");
 
 const app = express();
 
-const primaryModel = process.env.GROQ_MODEL_PRIMARY || "llama-3.3-70b-versatile";
-const degradedModel = process.env.GROQ_MODEL_DEGRADED || "llama-3.1-8b-instant";
+const primaryModel = process.env.GROQ_MODEL_PRIMARY || "openai/gpt-oss-120b";
+const degradedModel = process.env.GROQ_MODEL_DEGRADED || "openai/gpt-oss-20b";
 const allowedModels = new Set([primaryModel, degradedModel]);
 
 const groqApiKey = process.env.GROQ_API_KEY;
@@ -79,9 +79,8 @@ const buildMessages = ({ candidateSequences, instruction }) => [
     content: [
       "You are choosing the best move for a hexagonal board game.",
       "You will receive up to three candidate sequences of coordinates.",
-      "Return a JSON object with this exact shape:",
-      '{"move":[[row,column],[row,column]]}',
       "Choose exactly one of the provided sequences.",
+      "Return only the selected sequence in the JSON schema response.",
       "Do not add explanations or markdown."
     ].join(" ")
   },
@@ -93,6 +92,38 @@ const buildMessages = ({ candidateSequences, instruction }) => [
     })
   }
 ];
+
+const moveResponseFormat = {
+  type: "json_schema",
+  json_schema: {
+    name: "hex_game_move",
+    strict: true,
+    schema: {
+      type: "object",
+      properties: {
+        move: {
+          type: "array",
+          minItems: 1,
+          items: {
+            type: "array",
+            minItems: 2,
+            maxItems: 2,
+            items: {
+              type: "integer"
+            }
+          }
+        }
+      },
+      required: ["move"],
+      additionalProperties: false
+    }
+  }
+};
+
+const normalizeSequence = (sequence) =>
+  JSON.stringify(
+    (sequence || []).map((coordinate) => [Number(coordinate?.[0]), Number(coordinate?.[1])])
+  );
 
 const parseMoveResponse = (content) => {
   if (!content) {
@@ -107,6 +138,25 @@ const parseMoveResponse = (content) => {
   }
 
   return parsed.move;
+};
+
+const resolveMove = (move, candidateSequences) => {
+  const normalizedCandidates = new Set(candidateSequences.map(normalizeSequence));
+  const normalizedMove = normalizeSequence(move);
+
+  if (normalizedCandidates.has(normalizedMove)) {
+    return move;
+  }
+
+  const fallbackMove = candidateSequences[0];
+
+  if (!fallbackMove) {
+    throw new Error("No fallback candidate sequence was available");
+  }
+
+  console.warn("Model returned a move outside the candidate set. Falling back to the first candidate.");
+
+  return fallbackMove;
 };
 
 const handleLLMMove = async (req, res) => {
@@ -132,6 +182,7 @@ const handleLLMMove = async (req, res) => {
     const completion = await groq.chat.completions.create({
       model: selectedModel,
       temperature: 0,
+      response_format: moveResponseFormat,
       messages: buildMessages({
         candidateSequences,
         instruction
@@ -139,7 +190,7 @@ const handleLLMMove = async (req, res) => {
     });
 
     const content = completion.choices[0]?.message?.content || "";
-    const move = parseMoveResponse(content);
+    const move = resolveMove(parseMoveResponse(content), candidateSequences);
 
     res.json({
       move,
