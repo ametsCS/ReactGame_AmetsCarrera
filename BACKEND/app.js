@@ -40,6 +40,7 @@ app.get("/", (_req, res) => {
 app.get("/health", (_req, res) => {
   res.json({
     ok: true,
+    allowedOrigins,
     modelPrimary: primaryModel,
     modelDegraded: degradedModel
   });
