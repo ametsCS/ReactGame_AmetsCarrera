@@ -22,7 +22,7 @@ const LLMBoardView = ({ boardArray, pilaArray, yourTurn, onTurnEnd, onWin, isWin
 
   const LLM_makeMove = async (candidateSequences) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/llm-move`, {
+      const response = await fetch(`${API_BASE_URL}/llm-move`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

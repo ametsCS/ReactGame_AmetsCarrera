@@ -109,7 +109,7 @@ const parseMoveResponse = (content) => {
   return parsed.move;
 };
 
-app.post("/api/llm-move", async (req, res) => {
+const handleLLMMove = async (req, res) => {
   if (!groq) {
     res.status(500).json({
       error: "Missing GROQ_API_KEY on the backend"
@@ -151,6 +151,9 @@ app.post("/api/llm-move", async (req, res) => {
       error: "Failed to generate LLM move"
     });
   }
-});
+};
+
+app.post("/llm-move", handleLLMMove);
+app.post("/api/llm-move", handleLLMMove);
 
 module.exports = app;
